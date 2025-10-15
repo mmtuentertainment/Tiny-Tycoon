@@ -1,0 +1,14 @@
+{
+  "name": "tiny-tycoon",
+  "version": "0.1.0",
+  "description": "Tiny Tycoon - Katamari-style business growth game for LittleJS Game Jam 2025",
+  "scripts": {
+    "dev": "python3 -m http.server 8000",
+    "build": "node build.js",
+    "build:quick": "node build.js --quick",
+    "serve:build": "cd build && python3 -m http.server 8000"
+  },
+  "keywords": ["littlejs", "game", "jam", "katamari", "tiny-tycoon"],
+  "author": "",
+  "license": "MIT"
+}
