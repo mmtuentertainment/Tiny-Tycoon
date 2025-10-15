@@ -27,49 +27,34 @@ let gameInitCallCount = 0;
 // ============================================================================
 
 function gameInit() {
-    // Called when starting or restarting game (this is the FIRST callback!)
-    gameInitCallCount++;
-    console.log('===> GAME INIT CALLED #' + gameInitCallCount + ' <===');
+    // Called when starting or restarting game
+    console.log('Tiny Tycoon - Game initialized');
 
-    try {
-        // Initialize COLLECTIBLE_DATA now that LittleJS Color is available
-        COLLECTIBLE_DATA = {
-            coin: {
-                sizeRange: [0.3, 0.4],
-                value: 10,
-                color: new Color(1, 1, 0),       // Yellow
-                spawnWeight: 0.6                  // 60% of spawns
-            },
-            customer: {
-                sizeRange: [0.6, 0.8],
-                value: 50,
-                color: new Color(0, 0.5, 1),     // Blue
-                spawnWeight: 0.4                  // 40% of spawns
-            }
-        };
-        console.log('COLLECTIBLE_DATA initialized:', COLLECTIBLE_DATA);
+    // Initialize COLLECTIBLE_DATA now that LittleJS Color is available
+    COLLECTIBLE_DATA = {
+        coin: {
+            sizeRange: [0.3, 0.4],
+            value: 10,
+            color: new Color(1, 1, 0),       // Yellow
+            spawnWeight: 0.6                  // 60% of spawns
+        },
+        customer: {
+            sizeRange: [0.6, 0.8],
+            value: 50,
+            color: new Color(0, 0.5, 1),     // Blue
+            spawnWeight: 0.4                  // 40% of spawns
+        }
+    };
 
-        // Set camera (FR-001)
-        cameraPos = vec2(0, 0);
-        cameraScale = 32;
-        console.log('Camera set:', cameraPos, cameraScale);
+    // Set camera (FR-001)
+    cameraPos = vec2(0, 0);
+    cameraScale = 32;
 
-        // Create player at origin (FR-001)
-        console.log('About to create PlayerBall...');
-        player = new PlayerBall(vec2(0, 0));
-        console.log('Player created successfully:', player);
+    // Create player at origin (FR-001)
+    player = new PlayerBall(vec2(0, 0));
 
-        console.log('Player position:', player.pos);
-        console.log('Player size:', player.size);
-
-        // Spawn collectibles (FR-006, from research.md R4)
-        console.log('Spawning collectibles...');
-        spawnCollectibles();
-    } catch (error) {
-        console.error('ERROR IN GAME INIT:', error);
-    }
-
-    console.log('===> GAME INIT COMPLETE <===');
+    // Spawn collectibles (FR-006, from research.md R4)
+    spawnCollectibles();
 }
 
 function gameUpdate() {
@@ -102,8 +87,38 @@ function gameRender() {
 
 function gameRenderPost() {
     // Screen-space rendering (HUD, UI)
-    // Draw title to verify rendering works
+    if (!player) return;
+
+    // Calculate display values
+    const sizeMultiplier = (player.size.x / 0.5).toFixed(1);
+    const scoreFormatted = player.score.toLocaleString();
+
+    // Title (center top)
     drawTextScreen('Tiny Tycoon', vec2(mainCanvasSize.x/2, 50), 40, new Color(1, 1, 1));
+
+    // Size display (top-left) - FR-014
+    drawTextScreen(
+        `Size: ${sizeMultiplier}x`,
+        vec2(80, 100),  // Top-left area
+        32,
+        new Color(1, 1, 1),       // White
+        0,
+        'left',
+        'monospace',
+        new Color(0, 0, 0)         // Black outline
+    );
+
+    // Score display (top-right) - FR-015
+    drawTextScreen(
+        `$${scoreFormatted}`,
+        vec2(mainCanvasSize.x - 150, 100),  // Top-right area
+        32,
+        new Color(1, 1, 0),       // Yellow
+        0,
+        'right',
+        'monospace',
+        new Color(0, 0, 0)
+    );
 }
 
 // ============================================================================
@@ -156,13 +171,36 @@ class Collectible extends EngineObject {
         this.magnetActive = false;
         this.collideTiles = false;
         this.mass = 0.1;  // Small mass for collision detection
-        this.damping = 1.0;  // No movement damping (static objects)
+        this.damping = 0.9;  // Allow some movement for magnetic pull
         this.collideSolidObjects = true;  // Enable collision detection
     }
 
     update() {
         super.update();
-        // Magnetic attraction will be added in Phase 6 (T040-T048)
+
+        // Magnetic attraction (FR-012, from research.md R2)
+        if (!player) return;
+
+        const distanceToPlayer = this.pos.distance(player.pos);
+        const sizeRatio = this.size.x / player.size.x;
+
+        // Magnetic attraction: pull collectable objects when you're close
+        // Only works on objects you CAN collect (smaller than you)
+        const canCollect = player.size.x > this.size.x;
+
+        if (canCollect && distanceToPlayer < 1.2) {  // Short range - must be very close
+            // Stronger pull when very close, weaker when far
+            const distanceFactor = 1.0 - (distanceToPlayer / 1.2);
+            const magnetForce = 0.2 * distanceFactor;
+
+            // Apply gentle pull toward player
+            const directionToPlayer = player.pos.subtract(this.pos).normalize();
+            this.velocity = this.velocity.add(directionToPlayer.scale(magnetForce * 0.1));
+
+            this.magnetActive = true;
+        } else {
+            this.magnetActive = false;
+        }
     }
 
     render() {
@@ -249,8 +287,8 @@ class PlayerBall extends EngineObject {
         // Destroy collectible (FR-009)
         collectible.destroy();
 
-        const sizeMultiplier = (this.size.x / 0.5).toFixed(2);
-        console.log('Collected', collectible.type, '| Score:', this.score, '| Size:', sizeMultiplier + 'x');
+        // Optional: Log collection for debugging
+        // console.log('Collected', collectible.type, '| Score:', this.score);
     }
 
     render() {
