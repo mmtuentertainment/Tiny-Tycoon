@@ -188,9 +188,12 @@ class Collectible extends EngineObject {
         // Only works on objects you CAN collect (smaller than you)
         const canCollect = player.size.x > this.size.x;
 
-        if (canCollect && distanceToPlayer < 1.2) {  // Short range - must be very close
+        // Scale magnetic range with player size (so it stays consistent as you grow)
+        const magnetRange = 0.8 + (player.size.x * 0.3);  // Grows with player: 0.8 at start, 1.4 at size 2.0
+
+        if (canCollect && distanceToPlayer < magnetRange) {
             // Stronger pull when very close, weaker when far
-            const distanceFactor = 1.0 - (distanceToPlayer / 1.2);
+            const distanceFactor = 1.0 - (distanceToPlayer / magnetRange);
             const magnetForce = 0.2 * distanceFactor;
 
             // Apply gentle pull toward player
