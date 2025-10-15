@@ -15,12 +15,65 @@
 
 let COLLECTIBLE_DATA;
 
+// Feature 002: Level Progression System - Level Configuration
+const LEVEL_CONFIG = [
+    { // Level 1 - Easy
+        levelNumber: 1,
+        targetSize: 5.0,                    // Player must reach 5.0× size (10x from 0.5 start)
+        timeLimit: 60,                      // 60 seconds
+        playAreaSize: 50,                   // 50×50 unit square world
+        startingPlayerSize: 0.5,            // Reset to 0.5× each level
+        collectibleSizeMin: 0.3,            // Smallest collectible
+        collectibleSizeMax: 3.0,            // Largest collectible
+        collectibleSpawnCount: { min: 30, max: 50 }, // Random count in range
+        difficulty: 'Easy'
+    },
+    { // Level 2 - Medium
+        levelNumber: 2,
+        targetSize: 15.0,                   // 30x from 0.5 start
+        timeLimit: 90,                      // 90 seconds
+        playAreaSize: 100,                  // 100×100 units
+        startingPlayerSize: 0.5,
+        collectibleSizeMin: 3.0,            // Larger objects than L1
+        collectibleSizeMax: 10.0,
+        collectibleSpawnCount: { min: 40, max: 60 },
+        difficulty: 'Medium'
+    },
+    { // Level 3 - Hard
+        levelNumber: 3,
+        targetSize: 50.0,                   // 100x from 0.5 start
+        timeLimit: 120,                     // 120 seconds
+        playAreaSize: 150,                  // 150×150 units
+        startingPlayerSize: 0.5,
+        collectibleSizeMin: 10.0,           // Even larger objects
+        collectibleSizeMax: 40.0,
+        collectibleSpawnCount: { min: 50, max: 80 },
+        difficulty: 'Hard'
+    }
+];
+
+// Feature 002: State Machine
+const STATE = {
+    PLAYING: 'PLAYING',
+    VICTORY: 'VICTORY',
+    DEFEAT: 'DEFEAT',
+    LEVEL_TRANSITION: 'LEVEL_TRANSITION',
+    GAME_COMPLETE: 'GAME_COMPLETE'
+};
+
 // ============================================================================
 // GLOBAL VARIABLES
 // ============================================================================
 
 let player;
 let gameInitCallCount = 0;
+
+// Feature 002: Level Progression State
+let currentLevel = 0;              // 0-indexed: 0 = Level 1, 1 = Level 2, 2 = Level 3
+let levelState = STATE.PLAYING;    // Current game state
+let levelStartTime = 0;            // LittleJS `time` when level began
+let remainingTime = 0;             // Seconds remaining in level
+let transitionStartTime = 0;       // LittleJS `time` when transition screen shown
 
 // ============================================================================
 // ENGINE CALLBACKS (LittleJS requires exactly these 5 functions)
@@ -50,11 +103,9 @@ function gameInit() {
     cameraPos = vec2(0, 0);
     cameraScale = 32;
 
-    // Create player at origin (FR-001)
-    player = new PlayerBall(vec2(0, 0));
-
-    // Spawn collectibles (FR-006, from research.md R4)
-    spawnCollectibles();
+    // Feature 002: Start at Level 1 (T012)
+    // startLevel() now handles collectible spawning per level (T025)
+    startLevel(0);
 }
 
 function gameUpdate() {
@@ -62,10 +113,56 @@ function gameUpdate() {
     if (player) {
         cameraPos = cameraPos.lerp(player.pos, 0.1);
     }
+
+    // Feature 002: Timer countdown and lose condition (T015, will be enhanced in US3 T019)
+    if (levelState === STATE.PLAYING) {
+        const elapsed = time - levelStartTime;
+        remainingTime = Math.max(0, LEVEL_CONFIG[currentLevel].timeLimit - elapsed);
+
+        // Lose condition: time expired without reaching target
+        if (remainingTime <= 0 && player && player.size.x < LEVEL_CONFIG[currentLevel].targetSize) {
+            levelState = STATE.DEFEAT;
+            transitionStartTime = time;
+            console.log('DEFEAT! Time expired!');
+        }
+    }
+
+    // Feature 002: Skip input handling for transitions (T036)
+    if ((levelState === STATE.VICTORY || levelState === STATE.DEFEAT) && keyWasPressed()) {
+        handleTransition();
+    }
+
+    // Feature 002: Auto-advance timer for transitions (T014)
+    if ((levelState === STATE.VICTORY || levelState === STATE.DEFEAT) &&
+        time - transitionStartTime >= 2.5) {
+        handleTransition();
+    }
 }
 
 function gameUpdatePost() {
     // Post-update (after physics and object updates)
+
+    // Feature 002: Soft boundary enforcement (T029)
+    if (player) {
+        const config = LEVEL_CONFIG[currentLevel];
+        const playAreaHalfSize = config.playAreaSize / 2;
+
+        // Calculate viewport dimensions in world units
+        const viewportHalfWidth = mainCanvasSize.x / (2 * cameraScale);
+        const viewportHalfHeight = mainCanvasSize.y / (2 * cameraScale);
+
+        // Clamp camera to keep viewport within play area
+        cameraPos.x = clamp(
+            cameraPos.x,
+            -playAreaHalfSize + viewportHalfWidth,
+            playAreaHalfSize - viewportHalfWidth
+        );
+        cameraPos.y = clamp(
+            cameraPos.y,
+            -playAreaHalfSize + viewportHalfHeight,
+            playAreaHalfSize - viewportHalfHeight
+        );
+    }
 }
 
 function gameRender() {
@@ -93,8 +190,81 @@ function gameRenderPost() {
     const sizeMultiplier = (player.size.x / 0.5).toFixed(1);
     const scoreFormatted = player.score.toLocaleString();
 
+    // Feature 002: Victory screen (T013, T037 - enhanced with stats)
+    if (levelState === STATE.VICTORY) {
+        // Semi-transparent black overlay
+        drawRect(cameraPos, vec2(1000, 1000), new Color(0, 0, 0, 0.7));
+
+        const centerX = mainCanvasSize.x / 2;
+        const centerY = mainCanvasSize.y / 2;
+
+        // Victory message
+        drawTextScreen('LEVEL COMPLETE!', vec2(centerX, centerY + 60), 64, new Color(0, 1, 0));
+        drawTextScreen(`Final Size: ${sizeMultiplier}x`, vec2(centerX, centerY + 10), 32, new Color(1, 1, 1));
+
+        // Time remaining stat (T037)
+        const timeRemaining = formatTime(remainingTime);
+        drawTextScreen(`Time Remaining: ${timeRemaining}`, vec2(centerX, centerY - 30), 28, new Color(1, 1, 1));
+
+        drawTextScreen('Press any key to continue...', vec2(centerX, centerY - 100), 24, new Color(0.7, 0.7, 0.7));
+        return; // Skip normal HUD when showing victory screen
+    }
+
+    // Feature 002: Game Complete screen (T039)
+    if (levelState === STATE.GAME_COMPLETE) {
+        // Semi-transparent black overlay
+        drawRect(cameraPos, vec2(1000, 1000), new Color(0, 0, 0, 0.7));
+
+        const centerX = mainCanvasSize.x / 2;
+        const centerY = mainCanvasSize.y / 2;
+
+        // Game complete message
+        drawTextScreen('CONGRATULATIONS!', vec2(centerX, centerY + 80), 64, new Color(1, 1, 0));
+        drawTextScreen('ALL LEVELS COMPLETE!', vec2(centerX, centerY + 20), 48, new Color(0, 1, 0));
+        drawTextScreen(`Final Score: $${scoreFormatted}`, vec2(centerX, centerY - 30), 32, new Color(1, 1, 1));
+        drawTextScreen(`Final Size: ${sizeMultiplier}x`, vec2(centerX, centerY - 70), 32, new Color(1, 1, 1));
+        return; // Skip normal HUD
+    }
+
+    // Feature 002: Defeat screen (T016)
+    if (levelState === STATE.DEFEAT) {
+        // Semi-transparent black overlay
+        drawRect(cameraPos, vec2(1000, 1000), new Color(0, 0, 0, 0.7));
+
+        const centerX = mainCanvasSize.x / 2;
+        const centerY = mainCanvasSize.y / 2;
+        const config = LEVEL_CONFIG[currentLevel];
+        const targetMultiplier = (config.targetSize / 0.5).toFixed(1);
+
+        // Defeat message
+        drawTextScreen('TIME\'S UP!', vec2(centerX, centerY + 60), 64, new Color(1, 0, 0));
+        drawTextScreen(
+            `Size: ${sizeMultiplier}x / ${targetMultiplier}x`,
+            vec2(centerX, centerY),
+            32,
+            new Color(1, 1, 1)
+        );
+        drawTextScreen('Try again!', vec2(centerX, centerY - 40), 32, new Color(1, 1, 1));
+        drawTextScreen('Press any key to retry...', vec2(centerX, centerY - 100), 24, new Color(0.7, 0.7, 0.7));
+        return; // Skip normal HUD when showing defeat screen
+    }
+
     // Title (center top)
     drawTextScreen('Tiny Tycoon', vec2(mainCanvasSize.x/2, 50), 40, new Color(1, 1, 1));
+
+    // Feature 002: Timer display (T020, T021)
+    const displayTime = formatTime(remainingTime);
+    const timerColor = remainingTime <= 10 ? new Color(1, 0.3, 0) : new Color(1, 1, 1); // Orange when urgent
+    drawTextScreen(
+        displayTime,
+        vec2(mainCanvasSize.x / 2, mainCanvasSize.y - 40),  // Center bottom
+        48,
+        timerColor,
+        0,
+        'center',
+        'monospace',
+        new Color(0, 0, 0)  // Black outline
+    );
 
     // Size display (top-left) - FR-014
     drawTextScreen(
@@ -108,11 +278,39 @@ function gameRenderPost() {
         new Color(0, 0, 0)         // Black outline
     );
 
+    // Feature 002: Target size display (T032)
+    const config = LEVEL_CONFIG[currentLevel];
+    const targetMultiplier = (config.targetSize / 0.5).toFixed(1);
+    const progress = parseFloat(sizeMultiplier) / parseFloat(targetMultiplier);
+    const targetColor = progress >= 0.9 ? new Color(0, 1, 0) : new Color(1, 1, 1); // Green when close
+    drawTextScreen(
+        `Target: ${targetMultiplier}x`,
+        vec2(80, 140),  // Below size display
+        24,
+        targetColor,
+        0,
+        'left',
+        'monospace',
+        new Color(0, 0, 0)
+    );
+
+    // Feature 002: Level indicator (T033)
+    drawTextScreen(
+        `Level ${config.levelNumber}`,
+        vec2(mainCanvasSize.x - 120, 100),  // Top-right area
+        32,
+        new Color(1, 1, 1),
+        0,
+        'right',
+        'monospace',
+        new Color(0, 0, 0)
+    );
+
     // Score display (top-right) - FR-015
     drawTextScreen(
         `$${scoreFormatted}`,
-        vec2(mainCanvasSize.x - 150, 100),  // Top-right area
-        32,
+        vec2(mainCanvasSize.x - 120, 140),  // Below level indicator
+        24,
         new Color(1, 1, 0),       // Yellow
         0,
         'right',
@@ -122,9 +320,119 @@ function gameRenderPost() {
 }
 
 // ============================================================================
+// FEATURE 002: LEVEL PROGRESSION UTILITY FUNCTIONS
+// ============================================================================
+
+// Format seconds to MM:SS display (from research.md R2)
+function formatTime(seconds) {
+    const s = Math.floor(seconds);
+    const minutes = Math.floor(s / 60);
+    const secs = s % 60;
+    return `${minutes}:${secs.toString().padStart(2, '0')}`;
+}
+
+// Initialize a level (US1 T008-T010)
+function startLevel(levelIndex) {
+    currentLevel = levelIndex;
+    const config = LEVEL_CONFIG[currentLevel];
+
+    // Reset player to starting state (T008)
+    if (!player) {
+        player = new PlayerBall(vec2(0, 0));
+    } else {
+        player.pos = vec2(0, 0);
+        player.size = vec2(config.startingPlayerSize);
+        player.velocity = vec2(0, 0);
+        player.score = 0;
+        player.mass = config.startingPlayerSize * config.startingPlayerSize;
+    }
+
+    // Clear old collectibles (T024)
+    engineObjects.forEach(obj => {
+        if (obj instanceof Collectible) {
+            obj.destroy();
+        }
+    });
+
+    // Spawn new collectibles for this level (T025)
+    spawnCollectiblesForLevel(config);
+
+    // Reset timer (T009)
+    levelStartTime = time;
+    remainingTime = config.timeLimit;
+
+    // Set state to playing (T010)
+    levelState = STATE.PLAYING;
+
+    console.log(`Level ${config.levelNumber} started - Target: ${config.targetSize}x, Time: ${config.timeLimit}s`);
+}
+
+// Handle transition between levels (US1 T011, US2 T017)
+function handleTransition() {
+    if (levelState === STATE.VICTORY) {
+        // Victory: advance to next level or complete game (T011)
+        if (currentLevel < LEVEL_CONFIG.length - 1) {
+            startLevel(currentLevel + 1);
+        } else {
+            // Game complete (beat all 3 levels)
+            levelState = STATE.GAME_COMPLETE;
+            console.log('GAME COMPLETE! All 3 levels beaten!');
+        }
+    } else if (levelState === STATE.DEFEAT) {
+        // Defeat: retry same level (T017)
+        startLevel(currentLevel);
+    }
+}
+
+// ============================================================================
 // SPAWN SYSTEM
 // ============================================================================
 
+// Feature 002: Level-specific collectible spawning (T023, T026)
+function spawnCollectiblesForLevel(config) {
+    const spawnCount = Math.floor(
+        config.collectibleSpawnCount.min +
+        Math.random() * (config.collectibleSpawnCount.max - config.collectibleSpawnCount.min + 1)
+    );
+    const gridSize = Math.ceil(Math.sqrt(spawnCount)); // Square grid
+    const cellSize = config.playAreaSize / gridSize;
+    const playAreaHalfSize = config.playAreaSize / 2;
+
+    let spawned = 0;
+    for (let i = 0; i < spawnCount; i++) {
+        // Grid cell coordinates
+        const gridX = i % gridSize;
+        const gridY = Math.floor(i / gridSize);
+
+        // Cell center in world coordinates
+        const cellCenterX = -playAreaHalfSize + (gridX + 0.5) * cellSize;
+        const cellCenterY = -playAreaHalfSize + (gridY + 0.5) * cellSize;
+
+        // Randomize within cell (±40% of cell size to avoid edges)
+        const offsetX = (Math.random() - 0.5) * cellSize * 0.8;
+        const offsetY = (Math.random() - 0.5) * cellSize * 0.8;
+        const spawnPos = vec2(cellCenterX + offsetX, cellCenterY + offsetY);
+
+        // Random size within level range (T026 - use config sizes)
+        const size = config.collectibleSizeMin +
+                    Math.random() * (config.collectibleSizeMax - config.collectibleSizeMin);
+
+        // Random type (60% coin, 40% customer from Feature 001)
+        const type = Math.random() < 0.6 ? 'coin' : 'customer';
+
+        // Boundary check: ensure collectible fits within play area
+        const halfSize = size / 2;
+        if (Math.abs(spawnPos.x) + halfSize < playAreaHalfSize &&
+            Math.abs(spawnPos.y) + halfSize < playAreaHalfSize) {
+            new Collectible(spawnPos, type, size);
+            spawned++;
+        }
+    }
+
+    console.log(`Level ${config.levelNumber}: Spawned ${spawned} collectibles (size ${config.collectibleSizeMin}-${config.collectibleSizeMax})`);
+}
+
+// Legacy spawn function (Feature 001 - will be removed after full migration)
 function spawnCollectibles() {
     const GRID_ROWS = 12;
     const GRID_COLS = 12;
@@ -289,6 +597,14 @@ class PlayerBall extends EngineObject {
 
         // Destroy collectible (FR-009)
         collectible.destroy();
+
+        // Feature 002: Check win condition immediately after size update (T007)
+        if (levelState === STATE.PLAYING &&
+            this.size.x >= LEVEL_CONFIG[currentLevel].targetSize) {
+            levelState = STATE.VICTORY;
+            transitionStartTime = time;
+            console.log('VICTORY! Target size reached!');
+        }
 
         // Optional: Log collection for debugging
         // console.log('Collected', collectible.type, '| Score:', this.score);

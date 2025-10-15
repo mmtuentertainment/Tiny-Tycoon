@@ -26,12 +26,12 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] **T001** [P] Add LEVEL_CONFIG array constant to src/game.js (3 level objects with all parameters from data-model.md)
-- [ ] **T002** [P] Add STATE enum object to src/game.js (PLAYING, VICTORY, DEFEAT, LEVEL_TRANSITION, GAME_COMPLETE)
-- [ ] **T003** [P] Add global state variables to src/game.js (currentLevel, levelState, levelStartTime, remainingTime, transitionStartTime)
-- [ ] **T004** Create formatTime(seconds) utility function in src/game.js (MM:SS conversion from research.md R2)
-- [ ] **T005** Create startLevel(levelIndex) function skeleton in src/game.js (to be filled in by user stories)
-- [ ] **T006** Create handleTransition() function skeleton in src/game.js (to be filled in by user stories)
+- [X] **T001** [P] Add LEVEL_CONFIG array constant to src/game.js (3 level objects with all parameters from data-model.md)
+- [X] **T002** [P] Add STATE enum object to src/game.js (PLAYING, VICTORY, DEFEAT, LEVEL_TRANSITION, GAME_COMPLETE)
+- [X] **T003** [P] Add global state variables to src/game.js (currentLevel, levelState, levelStartTime, remainingTime, transitionStartTime)
+- [X] **T004** Create formatTime(seconds) utility function in src/game.js (MM:SS conversion from research.md R2)
+- [X] **T005** Create startLevel(levelIndex) function skeleton in src/game.js (to be filled in by user stories)
+- [X] **T006** Create handleTransition() function skeleton in src/game.js (to be filled in by user stories)
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -50,14 +50,14 @@
 
 ### Implementation for User Story 1
 
-- [ ] **T007** [US1] Add win condition check to PlayerBall.collect() method in src/game.js (if size >= targetSize → STATE.VICTORY)
-- [ ] **T008** [US1] Implement startLevel() player reset logic in src/game.js (pos, size, velocity, score per data-model.md)
-- [ ] **T009** [US1] Implement startLevel() timer initialization in src/game.js (levelStartTime = time, remainingTime = config.timeLimit)
-- [ ] **T010** [US1] Implement startLevel() state setup in src/game.js (levelState = STATE.PLAYING)
-- [ ] **T011** [US1] Implement handleTransition() victory path in src/game.js (if VICTORY → currentLevel++ or GAME_COMPLETE)
-- [ ] **T012** [US1] Call startLevel(0) in gameInit() to begin game at Level 1
-- [ ] **T013** [US1] Implement victory screen rendering in gameRenderPost() in src/game.js (overlay, "LEVEL COMPLETE!", stats)
-- [ ] **T014** [US1] Implement auto-advance timer check in gameUpdate() in src/game.js (2.5s after transitionStartTime → handleTransition())
+- [X] **T007** [US1] Add win condition check to PlayerBall.collect() method in src/game.js (if size >= targetSize → STATE.VICTORY)
+- [X] **T008** [US1] Implement startLevel() player reset logic in src/game.js (pos, size, velocity, score per data-model.md)
+- [X] **T009** [US1] Implement startLevel() timer initialization in src/game.js (levelStartTime = time, remainingTime = config.timeLimit)
+- [X] **T010** [US1] Implement startLevel() state setup in src/game.js (levelState = STATE.PLAYING)
+- [X] **T011** [US1] Implement handleTransition() victory path in src/game.js (if VICTORY → currentLevel++ or GAME_COMPLETE)
+- [X] **T012** [US1] Call startLevel(0) in gameInit() to begin game at Level 1
+- [X] **T013** [US1] Implement victory screen rendering in gameRenderPost() in src/game.js (overlay, "LEVEL COMPLETE!", stats)
+- [X] **T014** [US1] Implement auto-advance timer check in gameUpdate() in src/game.js (2.5s after transitionStartTime → handleTransition())
 
 **Checkpoint**: Can win Level 1, see victory screen, and auto-advance to Level 2 after 2.5s
 
@@ -76,9 +76,9 @@
 
 ### Implementation for User Story 2
 
-- [ ] **T015** [US2] Add lose condition check in gameUpdate() timer section in src/game.js (remainingTime <= 0 && size < target → STATE.DEFEAT)
-- [ ] **T016** [US2] Implement defeat screen rendering in gameRenderPost() in src/game.js (overlay, "TIME'S UP!", size comparison, retry prompt)
-- [ ] **T017** [US2] Implement handleTransition() defeat path in src/game.js (if DEFEAT → startLevel(currentLevel) to retry)
+- [X] **T015** [US2] Add lose condition check in gameUpdate() timer section in src/game.js (remainingTime <= 0 && size < target → STATE.DEFEAT)
+- [X] **T016** [US2] Implement defeat screen rendering in gameRenderPost() in src/game.js (overlay, "TIME'S UP!", size comparison, retry prompt)
+- [X] **T017** [US2] Implement handleTransition() defeat path in src/game.js (if DEFEAT → startLevel(currentLevel) to retry)
 - [ ] **T018** [US2] Test defeat flow: let timer expire on Level 1, verify defeat screen, verify retry restarts Level 1
 
 **Checkpoint**: Defeat screen works, retry correctly restarts same level
@@ -98,9 +98,9 @@
 
 ### Implementation for User Story 3
 
-- [ ] **T019** [US3] Implement timer update logic in gameUpdate() in src/game.js (elapsed = time - levelStartTime, remainingTime calculation)
-- [ ] **T020** [US3] Implement timer display in gameRenderPost() in src/game.js (center top, MM:SS format via formatTime())
-- [ ] **T021** [US3] Implement urgency color logic in gameRenderPost() in src/game.js (white if >10s, orange if ≤10s)
+- [X] **T019** [US3] Implement timer update logic in gameUpdate() in src/game.js (elapsed = time - levelStartTime, remainingTime calculation)
+- [X] **T020** [US3] Implement timer display in gameRenderPost() in src/game.js (center top, MM:SS format via formatTime())
+- [X] **T021** [US3] Implement urgency color logic in gameRenderPost() in src/game.js (white if >10s, orange if ≤10s)
 - [ ] **T022** [US3] Test timer: verify counts from 1:00 to 0:00, verify orange color at 0:10
 
 **Checkpoint**: Timer displays correctly, counts down accurately, shows urgency feedback
@@ -121,10 +121,10 @@
 
 ### Implementation for User Story 4
 
-- [ ] **T023** [US4] Create spawnCollectiblesForLevel(config) function in src/game.js (randomized grid algorithm from research.md R4)
-- [ ] **T024** [US4] Implement collectible clearing logic in startLevel() in src/game.js (collectibles.forEach destroy, clear array)
-- [ ] **T025** [US4] Call spawnCollectiblesForLevel(config) from startLevel() in src/game.js
-- [ ] **T026** [US4] Update spawn logic to use config.collectibleSizeMin/Max in src/game.js (replace Feature 001 fixed ranges)
+- [X] **T023** [US4] Create spawnCollectiblesForLevel(config) function in src/game.js (randomized grid algorithm from research.md R4)
+- [X] **T024** [US4] Implement collectible clearing logic in startLevel() in src/game.js (collectibles.forEach destroy, clear array)
+- [X] **T025** [US4] Call spawnCollectiblesForLevel(config) from startLevel() in src/game.js
+- [X] **T026** [US4] Update spawn logic to use config.collectibleSizeMin/Max in src/game.js (replace Feature 001 fixed ranges)
 - [ ] **T027** [US4] Test spawning: verify Level 1 has 30-50 small objects, Level 2 has 40-60 medium, Level 3 has 50-80 large
 
 **Checkpoint**: Each level spawns correct count and size range of collectibles
@@ -144,8 +144,8 @@
 
 ### Implementation for User Story 5
 
-- [ ] **T028** [US5] Verify LEVEL_CONFIG array has correct values in src/game.js (L1: 5.0/60/50, L2: 15.0/90/100, L3: 50.0/120/150)
-- [ ] **T029** [US5] Implement soft boundary camera clamp in gameUpdatePost() in src/game.js (clamp after lerp, use playAreaSize from config)
+- [X] **T028** [US5] Verify LEVEL_CONFIG array has correct values in src/game.js (L1: 5.0/60/50, L2: 15.0/90/100, L3: 50.0/120/150)
+- [X] **T029** [US5] Implement soft boundary camera clamp in gameUpdatePost() in src/game.js (clamp after lerp, use playAreaSize from config)
 - [ ] **T030** [US5] Test boundaries: verify camera stops at edges for each level, no black space visible
 - [ ] **T031** [US5] Test difficulty scaling: play all 3 levels, verify each feels harder than previous
 
@@ -166,9 +166,9 @@
 
 ### Implementation for User Story 6
 
-- [ ] **T032** [P] [US6] Add target size display in gameRenderPost() in src/game.js (top left, "Target: 10.0x" format)
-- [ ] **T033** [P] [US6] Add level indicator display in gameRenderPost() in src/game.js (top right, "Level 1" format)
-- [ ] **T034** [US6] Update existing size display from Feature 001 to show progress indicator in src/game.js (optional: color change at 90%)
+- [X] **T032** [P] [US6] Add target size display in gameRenderPost() in src/game.js (top left, "Target: 10.0x" format)
+- [X] **T033** [P] [US6] Add level indicator display in gameRenderPost() in src/game.js (top right, "Level 1" format)
+- [X] **T034** [US6] Update existing size display from Feature 001 to show progress indicator in src/game.js (optional: color change at 90%)
 - [ ] **T035** [US6] Test HUD: verify all displays visible, accurate, and update in real-time
 
 **Checkpoint**: HUD clearly shows current size, target, level, and timer at all times
@@ -189,10 +189,10 @@
 
 ### Implementation for User Story 7
 
-- [ ] **T036** [US7] Implement skip input handling in gameUpdate() in src/game.js (keyWasPressed() during VICTORY/DEFEAT → handleTransition())
-- [ ] **T037** [US7] Add level stats to victory screen in src/game.js (final size, time remaining from data-model.md)
-- [ ] **T038** [US7] Add encouragement message to defeat screen in src/game.js ("Try again!" text)
-- [ ] **T039** [US7] Implement GAME_COMPLETE screen rendering in gameRenderPost() in src/game.js (final victory after Level 3)
+- [X] **T036** [US7] Implement skip input handling in gameUpdate() in src/game.js (keyWasPressed() during VICTORY/DEFEAT → handleTransition())
+- [X] **T037** [US7] Add level stats to victory screen in src/game.js (final size, time remaining from data-model.md)
+- [X] **T038** [US7] Add encouragement message to defeat screen in src/game.js ("Try again!" text)
+- [X] **T039** [US7] Implement GAME_COMPLETE screen rendering in gameRenderPost() in src/game.js (final victory after Level 3)
 - [ ] **T040** [US7] Test transitions: verify skip works, auto-advance timing correct, stats display accurately
 
 **Checkpoint**: All transition screens polished, skippable, and display appropriate feedback
@@ -205,13 +205,13 @@
 
 - [ ] **T041** Integration test: Play complete game flow (Level 1 → 2 → 3) without errors
 - [ ] **T042** Integration test: Test defeat on each level, verify retry works correctly
-- [ ] **T043** Code review: Verify all global variables initialized correctly in src/game.js
-- [ ] **T044** Code review: Verify no Feature 001 code broken by Feature 002 changes
+- [X] **T043** Code review: Verify all global variables initialized correctly in src/game.js
+- [X] **T044** Code review: Verify no Feature 001 code broken by Feature 002 changes
 - [ ] **T045** Performance test: Run Level 3 (80 collectibles max) and verify 60 FPS maintained
 - [ ] **T046** Run quickstart.md validation checklist (all 3 levels, defeat flow, timer, boundaries, HUD)
 - [ ] **T047** Manual playtest: Verify "SMALL" theme evident through cyclical rebirth pattern (start small 3 times)
-- [ ] **T048** [P] Update manual-checklist.md in tests/ with Level 2-3 scenarios
-- [ ] **T049** [P] Add comments to LEVEL_CONFIG and STATE enum for maintainability
+- [X] **T048** [P] Update manual-checklist.md in tests/ with Level 2-3 scenarios
+- [X] **T049** [P] Add comments to LEVEL_CONFIG and STATE enum for maintainability
 
 ---
 
