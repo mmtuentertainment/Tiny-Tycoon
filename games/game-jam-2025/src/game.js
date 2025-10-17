@@ -139,6 +139,186 @@ const PARTICLE_BUDGET = {
 let activeParticleCount = 0;  // Estimated active particles (decays over time)
 let emissionMultiplier = 1.0; // LOD multiplier (1.0 = full quality, 0.5 = reduced)
 
+// ============================================================================
+// FEATURE 006: UTILITY FUNCTIONS (FR-006-018, FR-006-021)
+// ============================================================================
+
+/**
+ * Format currency with K/M/B notation (Clarification Q4)
+ * <1K: Exact dollars ("$1", "$300")
+ * 1K+: K suffix ("$1.5K", "$5K")
+ * 1M+: M suffix ("$1.5M", "$5M")
+ * 1B+: B suffix ("$2B", "$500B")
+ */
+function formatCurrency(value) {
+    if (value < 1000) {
+        return `$${value}`;  // Exact: "$1", "$300"
+    } else if (value < 1000000) {
+        const k = value / 1000;
+        return k % 1 === 0 ? `$${k}K` : `$${k.toFixed(1)}K`;  // "$1.5K"
+    } else if (value < 1000000000) {
+        const m = value / 1000000;
+        return m % 1 === 0 ? `$${m}M` : `$${m.toFixed(1)}M`;  // "$5M"
+    } else {
+        const b = value / 1000000000;
+        return b % 1 === 0 ? `$${b}B` : `$${b.toFixed(1)}B`;  // "$2B"
+    }
+}
+
+/**
+ * Truncate object name at word boundary (Clarification Q5)
+ * Preferred: Word boundary within 20 chars ("ULTRA LUXURY...")
+ * Fallback: Character 17 + "..." if no word boundary
+ * Minimum: 4 characters visible before ellipsis
+ */
+function truncateName(name, maxChars = 20) {
+    if (name.length <= maxChars) {
+        return name;  // No truncation needed
+    }
+
+    // Find last space within limit
+    const truncated = name.substring(0, maxChars);
+    const lastSpace = truncated.lastIndexOf(' ');
+
+    // Word boundary found and leaves ≥4 chars visible
+    if (lastSpace > 4) {
+        return truncated.substring(0, lastSpace) + '...';
+    }
+
+    // Fallback: character limit (ensure 4+ chars visible)
+    return truncated.substring(0, Math.max(4, maxChars - 3)) + '...';
+}
+
+// ============================================================================
+// FEATURE 006: POPUP TEXT MANAGER (FR-006-012, FR-006-014)
+// ============================================================================
+
+/**
+ * PopupTextManager - Manages collection popup text (simplified for jam)
+ * FR-006-012: 1.0s duration with upward float + fade animation
+ * FR-006-014: Max 5 simultaneous popups, oldest removed first
+ * NOTE: Aggregation removed for simplicity (faster to ship)
+ */
+class PopupTextManager {
+    constructor() {
+        this.activePopups = [];
+        this.maxPopups = 5;             // Max simultaneous (FR-006-014)
+        this.popupDuration = 1.0;       // 1 second (FR-006-012)
+        this.floatDistance = 40;        // Pixels upward (FR-006-012)
+    }
+
+    /**
+     * Show collection popup
+     * @param {string} objectName - Name to display (e.g., "PENNY")
+     * @param {number} value - Dollar value for formatting
+     * @param {vec2} worldPos - World position where collection occurred
+     */
+    showCollection(objectName, value, worldPos) {
+        // Truncate name if needed (defensive)
+        const truncatedName = truncateName(objectName, 20);
+
+        // Format currency
+        const formattedValue = formatCurrency(value);
+
+        // Create popup text
+        const text = `${truncatedName}! +${formattedValue}`;
+
+        // Create new popup
+        const popup = {
+            text: text,
+            value: value,
+            startTime: time,
+            worldPos: worldPos.copy(),
+            yOffset: 0,
+            alpha: 1.0
+        };
+
+        this.activePopups.push(popup);
+
+        // Enforce max popup limit (FR-006-014)
+        if (this.activePopups.length > this.maxPopups) {
+            this.activePopups.shift();  // Remove oldest
+        }
+    }
+
+    /**
+     * Update all active popups (called per frame in gameUpdate)
+     */
+    update() {
+        const now = time;
+
+        // Update each popup (reverse loop for safe removal)
+        for (let i = this.activePopups.length - 1; i >= 0; i--) {
+            const popup = this.activePopups[i];
+            const age = now - popup.startTime;
+
+            // Remove expired popups
+            if (age > this.popupDuration) {
+                this.activePopups.splice(i, 1);
+                continue;
+            }
+
+            // Animate upward float (FR-006-012)
+            const progress = age / this.popupDuration;
+            popup.yOffset = this.floatDistance * progress;
+
+            // Fade out in last 30% of lifetime
+            popup.alpha = progress > 0.7 ? 1.0 - ((progress - 0.7) / 0.3) : 1.0;
+        }
+    }
+
+    /**
+     * Render all active popups (called in gameRenderPost)
+     */
+    render() {
+        const baseYOffset = 100;  // Distance above screen center
+        const stackSpacing = 30;  // Vertical spacing between popups
+
+        for (let i = 0; i < this.activePopups.length; i++) {
+            const popup = this.activePopups[i];
+
+            // Screen center + offset for stacking
+            const screenX = mainCanvasSize.x / 2;
+            const screenY = mainCanvasSize.y / 2 - baseYOffset - (i * stackSpacing) - popup.yOffset;
+
+            // Color based on value (white/yellow/orange)
+            const color = this.getPopupColor(popup.value);
+            const colorWithAlpha = color.scale(1, popup.alpha);
+
+            // Font size based on value
+            const fontSize = popup.value > 1000 ? 32 : 24;
+
+            // Render text with outline
+            drawTextScreen(
+                popup.text,
+                vec2(screenX, screenY),
+                fontSize,
+                colorWithAlpha,
+                0,           // angle
+                'center',    // textAlign
+                'monospace', // font
+                new Color(0, 0, 0, popup.alpha * 0.8)  // Outline
+            );
+        }
+    }
+
+    /**
+     * Color-code popups by value
+     * White: Common (<$100)
+     * Yellow: Medium ($100-$10K)
+     * Orange: Rare (>$10K)
+     */
+    getPopupColor(value) {
+        if (value > 10000) {
+            return new Color(1, 0.5, 0);  // Orange (rare)
+        } else if (value > 100) {
+            return new Color(1, 1, 0);    // Yellow (medium)
+        } else {
+            return new Color(1, 1, 1);    // White (common)
+        }
+    }
+}
+
 /**
  * SoundManager - Manages all game audio via ZzFX
  * FR-004-001: Pre-caches all sounds for instant playback
