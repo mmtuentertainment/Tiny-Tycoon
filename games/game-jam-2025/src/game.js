@@ -64,19 +64,19 @@ const STATE = {
 // ============================================================================
 // SCREEN SHAKE CONSTANTS (Feature 003: FR-030)
 // ============================================================================
-// Tuned values from research. MAY adjust during playtesting.
+// Tuned values - ADJUSTED during playtesting for visibility
 // Formula: shakePower = SHAKE_BASE + (objectValue * SHAKE_VALUE_MULTIPLIER)
-const SHAKE_BASE = 0.05;                // Min shake (penny: $1 → 0.05)
-const SHAKE_VALUE_MULTIPLIER = 0.0001;  // Multiplier (yacht: $5M → 0.55)
-const SHAKE_MAX = 2.5;                  // Max cumulative shake per frame
-const SHAKE_TIER_UP = 0.3;              // Tier-up celebration shake (future)
-const SHAKE_VICTORY = 0.5;              // Victory celebration shake
+const SHAKE_BASE = 0.3;                 // Min shake - increased from 0.05 for visibility
+const SHAKE_VALUE_MULTIPLIER = 0.001;   // Multiplier - increased 10x for dramatic effect
+const SHAKE_MAX = 5.0;                  // Max cumulative shake - increased for bigger impact
+const SHAKE_TIER_UP = 1.0;              // Tier-up celebration shake (future)
+const SHAKE_VICTORY = 2.0;              // Victory celebration shake - very dramatic
 
-// Example calculations (for reference):
-// Penny ($10):         0.05 + (10 * 0.0001) = 0.051 (subtle)
-// Customer ($50):      0.05 + (50 * 0.0001) = 0.055 (slightly more)
-// Yacht ($5,000,000):  0.05 + (5000000 * 0.0001) = 0.55 (dramatic)
-// Rocket ($2B):        0.05 + (2000000000 * 0.0001) = 200.05 → clamped to 2.5 (extreme)
+// Example calculations (adjusted values):
+// Penny ($10):         0.3 + (10 * 0.001) = 0.31 (noticeable)
+// Customer ($50):      0.3 + (50 * 0.001) = 0.35 (more visible)
+// Yacht ($5,000,000):  0.3 + (5000000 * 0.001) = 5.3 → clamped to 5.0 (very dramatic)
+// Rocket ($2B):        massive → clamped to 5.0 (extreme shake)
 
 // ============================================================================
 // GLOBAL VARIABLES
@@ -91,6 +91,9 @@ let levelState = STATE.PLAYING;    // Current game state
 let levelStartTime = 0;            // LittleJS `time` when level began
 let remainingTime = 0;             // Seconds remaining in level
 let transitionStartTime = 0;       // LittleJS `time` when transition screen shown
+
+// Feature 003: Screen shake system (FR-030-007)
+let cameraShake = 0;               // Current shake intensity, decays automatically
 
 // ============================================================================
 // ENGINE CALLBACKS (LittleJS requires exactly these 5 functions)
@@ -158,6 +161,20 @@ function gameUpdate() {
 
 function gameUpdatePost() {
     // Post-update (after physics and object updates)
+
+    // Feature 003: Apply screen shake to camera (FR-030-007)
+    if (cameraShake > 0) {
+        // Add random offset to camera based on shake intensity
+        const shakeOffset = vec2(
+            (Math.random() - 0.5) * cameraShake,
+            (Math.random() - 0.5) * cameraShake
+        );
+        cameraPos = cameraPos.add(shakeOffset);
+
+        // Decay shake over time (~0.5s to zero)
+        cameraShake *= 0.9;
+        if (cameraShake < 0.01) cameraShake = 0; // Stop when negligible
+    }
 
     // Feature 002: Boundary enforcement (T029 - modified to hard boundaries for better gameplay)
     if (player) {
