@@ -645,7 +645,7 @@ function spawnTierUpParticles(pos) {
     console.log('Colors:', colors);
 
     // Create massive explosion (FR-005-008-CLARIFIED: golden + rainbow variation)
-    // Using simplified LittleJS ParticleEmitter signature
+    // Using tile(0,16) instead of undefined - may fix rendering issue
     const emitter = new ParticleEmitter(
         pos,                       // Position at player center
         0,                         // Angle
@@ -653,7 +653,7 @@ function spawnTierUpParticles(pos) {
         config.emitTime,           // Emit time (0.01s)
         particleCount,             // Emit rate (100 particles)
         config.emitConeAngle,      // Emit cone angle (PI*2)
-        undefined,                 // Tile info (undefined = colored circles)
+        tile(0,16),                // Tile info (use player tile 0 as particle sprite)
         colors.startA, colors.startB, colors.endA, colors.endB,  // Colors
         config.particleTime,       // Particle time (1.0s)
         config.sizeStart, config.sizeEnd,  // Size start/end
