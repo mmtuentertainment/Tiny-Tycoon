@@ -596,26 +596,21 @@ function spawnMagneticTrailParticles(pos, count) {
     const particleCount = Math.floor(count * emissionMultiplier);
     if (particleCount < 1) return; // Skip if LOD too aggressive
 
-    const config = PARTICLE_CONFIG.magneticTrail;
-    const colors = PARTICLE_COLORS.magneticTrail;
-
-    // Create subtle trail particles - FULL parameter list (FR-005-010-CLARIFIED)
+    // Create subtle trail particles - working 24-parameter pattern (FR-005-010-CLARIFIED)
     new ParticleEmitter(
-        pos, PI,                   // 1-2: position, angle
-        0.2, config.emitTime,      // 3-4: emitSize, emitTime (0.01)
-        particleCount, config.emitConeAngle,  // 5-6: emitRate (1-2), emitConeAngle (0.5)
-        tile(0, 16),               // 7: tileInfo (use player sprite)
-        colors.startA, colors.startB,  // 8-9: colorStartA, colorStartB
-        colors.endA, colors.endB,      // 10-11: colorEndA, colorEndB
-        config.particleTime,       // 12: particleTime (0.3s)
-        config.sizeStart, config.sizeEnd,  // 13-14: sizeStart, sizeEnd
-        config.speed,              // 15: speed (0.5 = slow trail!)
-        config.angleVelocity,      // 16: angleSpeed (0 = no rotation)
-        config.damping,            // 17: damping (0.95)
-        config.angleDamping,       // 18: angleDamping (1)
-        config.gravityScale,       // 19: gravityScale (0)
-        config.particleConeAngle,  // 20: particleConeAngle (0.5)
-        config.fadeRate            // 21: fadeRate (0.2)
+        pos, PI,                   // emitPos, emitAngle
+        0.3, 0.01,                 // emitSize, emitTime
+        particleCount, 0.5,        // emitRate (1-2), emitConeAngle (narrow)
+        tile(0, 16),               // tileInfo
+        hsl(0.15,1,0.6,0.6), hsl(0.17,1,0.6,0.6),  // colorStartA, colorStartB (pale yellow, semi-transparent)
+        hsl(0.15,1,0.5,0), hsl(0.17,1,0.5,0),      // colorEndA, colorEndB (fade)
+        0.4,                       // particleTime (0.4s - quick but visible)
+        0.25, 0.1,                 // sizeStart, sizeEnd (small trail particles)
+        1, 0,                      // speed (1 = slow drift), angleSpeed
+        .95, 1,                    // damping, angleDamping
+        0, 0.5,                    // gravityScale, particleConeAngle
+        .1, .3,                    // fadeRate, randomness
+        false, true                // collideTiles, additive (glow!)
     );
 
     // Track for budget management
@@ -665,26 +660,21 @@ function spawnCollectionParticles(pos, value) {
 
     if (particleCount < 1) return; // Skip if LOD too aggressive
 
-    const config = PARTICLE_CONFIG.collection;
-    const colors = PARTICLE_COLORS.collection;
-
-    // Create particle burst - FULL parameter list (FR-005-003, FR-005-006)
+    // Create particle burst - working 24-parameter pattern (FR-005-003, FR-005-006)
     new ParticleEmitter(
-        pos, PI,                   // 1-2: position, angle (PI = down, upward burst)
-        0.5, config.emitTime,      // 3-4: emitSize, emitTime (0.01)
-        particleCount, config.emitConeAngle,  // 5-6: emitRate (logarithmic), emitConeAngle (PI)
-        tile(0, 16),               // 7: tileInfo (use player sprite)
-        colors.startA, colors.startB,  // 8-9: colorStartA, colorStartB
-        colors.endA, colors.endB,      // 10-11: colorEndA, colorEndB
-        config.particleTime,       // 12: particleTime (0.5s)
-        config.sizeStart, config.sizeEnd,  // 13-14: sizeStart, sizeEnd
-        config.speed,              // 15: speed (3 = medium burst!)
-        config.angleVelocity,      // 16: angleSpeed (0 = no rotation)
-        config.damping,            // 17: damping (0.92)
-        config.angleDamping,       // 18: angleDamping (1)
-        config.gravityScale,       // 19: gravityScale (0)
-        config.particleConeAngle,  // 20: particleConeAngle (PI)
-        config.fadeRate            // 21: fadeRate (0.1)
+        pos, PI,                   // emitPos, emitAngle (PI = upward burst)
+        1, 0.1,                    // emitSize, emitTime
+        particleCount, PI,         // emitRate (logarithmic), emitConeAngle (180°)
+        tile(0, 16),               // tileInfo
+        hsl(0.15,1,0.5), hsl(0.1,1,0.5),      // colorStartA (yellow), colorStartB (golden)
+        hsl(0.08,1,0.4,0), hsl(0.05,1,0.3,0), // colorEndA (orange fade), colorEndB
+        0.8,                       // particleTime (0.8s - visible but quick)
+        0.4, 0.2,                  // sizeStart, sizeEnd (medium particles)
+        3, 0,                      // speed (3 = good burst), angleSpeed
+        .92, 1,                    // damping, angleDamping
+        0, PI,                     // gravityScale, particleConeAngle
+        .05, .5,                   // fadeRate, randomness
+        false, true                // collideTiles, additive (glow!)
     );
 
     // Track for budget management
