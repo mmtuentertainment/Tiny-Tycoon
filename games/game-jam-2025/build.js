@@ -16,7 +16,10 @@ const path = require('path');
 // Configuration
 const CONFIG = {
     sourceFiles: [
-        '../../LittleJS/dist/littlejs.release.js',
+        // Try local symlink first, fallback to workspace parent directory
+        fs.existsSync('LittleJS/dist/littlejs.release.js')
+            ? 'LittleJS/dist/littlejs.release.js'
+            : '../../LittleJS/dist/littlejs.release.js',
         'src/game.js',
     ],
     assetFiles: [
