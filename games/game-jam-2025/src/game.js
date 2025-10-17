@@ -167,15 +167,21 @@ function gameUpdatePost() {
 
 function gameRender() {
     // World-space rendering (background, terrain)
-    // Draw green background
-    drawRect(cameraPos, vec2(100), new Color(0.2, 0.6, 0.3));
+    // Feature 002: Draw background scaled to current level's play area
+    const config = LEVEL_CONFIG[currentLevel];
+    const playAreaSize = config.playAreaSize;
 
-    // Draw grid lines as reference (so you can see movement)
-    for (let x = -50; x <= 50; x += 5) {
-        drawLine(vec2(x, -50), vec2(x, 50), 0.1, new Color(0, 0, 0, 0.3));
+    // Draw green background (much larger to cover entire play area)
+    drawRect(vec2(0, 0), vec2(playAreaSize * 2, playAreaSize * 2), new Color(0.2, 0.6, 0.3));
+
+    // Draw grid lines scaled to play area
+    const halfSize = playAreaSize / 2;
+    const gridStep = 5;
+    for (let x = -halfSize; x <= halfSize; x += gridStep) {
+        drawLine(vec2(x, -halfSize), vec2(x, halfSize), 0.1, new Color(0, 0, 0, 0.3));
     }
-    for (let y = -50; y <= 50; y += 5) {
-        drawLine(vec2(-50, y), vec2(50, y), 0.1, new Color(0, 0, 0, 0.3));
+    for (let y = -halfSize; y <= halfSize; y += gridStep) {
+        drawLine(vec2(-halfSize, y), vec2(halfSize, y), 0.1, new Color(0, 0, 0, 0.3));
     }
 
     // Draw origin marker (red dot at 0,0)
