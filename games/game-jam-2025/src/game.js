@@ -1062,6 +1062,9 @@ class PlayerBall extends EngineObject {
      * Can be manually triggered for testing: player.onTierUp()
      */
     onTierUp() {
+        console.log('onTierUp called - player position:', this.pos, 'x:', this.pos.x, 'y:', this.pos.y);
+        console.log('Camera position:', cameraPos);
+
         // TEST: ULTRA MASSIVE particles - GIGANTIC, VERY SLOW, VERY LONG
         new ParticleEmitter(
             this.pos, 0,              // emitPos, emitAngle
