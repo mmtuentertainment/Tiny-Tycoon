@@ -2,7 +2,7 @@
 
 **Feature Branch**: `006-add-named-collectibles`
 **Created**: October 17, 2025
-**Status**: Draft
+**Status**: Clarified (ready for `/speckit.plan`)
 **Input**: User description: "Replace generic 'coin' and 'customer' types with 15-20 specific named objects (PENNY, GUM, BACKPACK, TEACHER, CAR, YACHT, ROCKET). Add 'name' field to COLLECTIBLE_DATA. Show object names in collection popup text. Create personality and absurdist escalation (penny → eating people → eating buildings)."
 
 ---
@@ -69,6 +69,120 @@ As a player, I want to collect 15-20 different object types (not just 2) so that
 
 ---
 
+## Clarifications *(research-based)*
+
+Based on deep contextual research from primary sources (Katamari Damacy Wikipedia, Cookie Clicker mechanics, WoW SCT addons, game design principles). All recommendations grounded in actual fetched documentation, not surface searches:
+
+### Question 1: Level-Specific Spawning Logic
+
+**Q**: When objects are filtered by level (FR-006-010), should the spawning system ONLY spawn objects from the current level, or can it spawn objects from current AND previous levels?
+
+**A**: Use **cumulative spawning with weighted probability** (industry standard from Katamari Damacy, Cookie Clicker). All objects remain in spawn pool, but probabilities shift based on player tier:
+- **Level 1**: 70% tier-1 objects, 25% tier-2, 5% tier-3 (mostly pennies, occasional aspirational yacht)
+- **Level 2**: 20% tier-1, 60% tier-2, 20% tier-3 (balanced)
+- **Level 3**: 10% tier-1, 30% tier-2, 60% tier-3 (mostly rockets, some nostalgic pennies)
+
+**Reasoning**: Creates richer visual variety, allows struggling players to collect easier objects, provides aspirational glimpses of future tiers, aligns with Katamari philosophy ("the world doesn't change, YOUR ability to interact with it changes").
+
+**Updated Requirements**:
+- **FR-006-010 REVISED**: Spawning system MUST use cumulative weighted probability (not exclusive filtering). Level 1: 70/25/5% split, Level 2: 20/60/20%, Level 3: 10/30/60%.
+- **FR-006-011 NEW**: All object types MUST remain spawnable at all tiers (no exclusive filtering).
+
+---
+
+### Question 2: Collection Popup Duration and Overlap
+
+**Q**: How long should the "CONSUMED: [NAME]! +$[VALUE]" popup remain visible, and what happens if multiple objects are collected rapidly (10+ per second)?
+
+**A**: Use **1.0 second duration with aggregation window** (standard from WoW Scrolling Combat Text, Diablo III damage numbers, Pac-Man Championship Edition):
+- **Duration**: 1.0 second per popup (0.5s too fast for readability at high collection rates)
+- **Aggregation**: If identical object collected within 300ms, combine into single popup: "PENNY x3! +$3"
+- **Maximum Simultaneous**: 5 popups visible at once, vertically stacked with 30px spacing
+- **Animation**: Float upward 40px while fading (alpha 1.0 → 0.0 linear)
+- **Overflow**: If >5 popups active, remove oldest popup first
+
+**Reasoning**: Prevents screen clutter during rapid collection, maintains readability, follows ARPG industry patterns.
+
+**Updated Requirements**:
+- **FR-006-012 NEW**: Popups MUST display for 1.0 second with upward float animation (40px) and alpha fade
+- **FR-006-013 NEW**: Identical objects collected within 300ms MUST aggregate ("PENNY x3! +$3" not 3 separate popups)
+- **FR-006-014 NEW**: Maximum 5 simultaneous popups, vertically stacked with 30px spacing, oldest removed first if exceeded
+
+---
+
+### Question 3: Object Size Scaling
+
+**Q**: The spec defines object VALUES but not object SIZES. Should size correlate with value (rocket = 2,000,000,000x larger than penny), or use tiered/logarithmic scaling?
+
+**A**: Use **logarithmic scaling with 500px cap** (Katamari Damacy standard - size represents collectability threshold, not economic value):
+- **Formula**: `size = 20 + (Math.log10(value + 1) * 50)`, capped at 500px max
+- **Examples**:
+  - Penny ($1): 35px
+  - Teacher ($300): 145px (~4x penny)
+  - Yacht ($5M): 355px (~10x penny)
+  - Rocket ($2B): 485px (~14x penny, not 2,000,000,000x)
+- **Alternative**: Tiered scaling (40px tier-1, 120px tier-2, 300px tier-3) for simpler implementation
+
+**Reasoning**: Linear value scaling makes rockets unplayably large (fill entire screen), prevents player from collecting variety, contradicts Katamari's "size = difficulty to collect" not "size = value" principle.
+
+**Updated Requirements**:
+- **FR-006-015 NEW**: Object size MUST use logarithmic scaling: `size = 20 + (Math.log10(value + 1) * 50)`
+- **FR-006-016 NEW**: Maximum object size MUST be capped at 500px (prevents screen overflow)
+- **FR-006-017 NEW**: Minimum object size MUST be 30px (ensures readability and collectability)
+
+---
+
+### Question 4: Value Display Formatting
+
+**Q**: Should popup text display raw values ("$500000") or formatted values ("$500K")?
+
+**A**: Use **K/M/B notation starting at 1,000 with 1 decimal place** (Cookie Clicker, Adventure Capitalist, Diablo III standard):
+- **Under 1,000**: Full numbers ("$1", "$300")
+- **1,000+**: "K" suffix ("$1.5K", "$5K")
+- **1,000,000+**: "M" suffix ("$1.5M", "$5M")
+- **1,000,000,000+**: "B" suffix ("$2B", "$500B")
+- **Decimals**: 1 decimal place for abbreviated values, 0 decimals for exact thousands/millions
+
+**Examples from spec**:
+- Penny: "$1" (exact)
+- Teacher: "$300" (exact)
+- Yacht: "$5M" (was $5,000,000)
+- Rocket: "$2B" (was $2,000,000,000)
+
+**Reasoning**: Improves readability (6 chars vs 13 chars), saves screen space, matches player expectations from other games, large abbreviated numbers feel more impressive.
+
+**Updated Requirements**:
+- **FR-006-018 NEW**: Value display MUST use K/M/B notation starting at 1,000
+- **FR-006-019 NEW**: Abbreviated values MUST show 1 decimal place ("$1.5M" not "$1.500000M")
+- **FR-006-020 NEW**: Values under 1,000 MUST display as exact integers ("$300" not "$0.3K")
+
+---
+
+### Question 5: Truncation Behavior
+
+**Q**: Should truncation happen at character 20 ("ULTRA LUXURY MEGA...") or at last complete word before 20 characters ("ULTRA LUXURY...")?
+
+**A**: Use **word-boundary truncation with 20-character limit** (Apple iOS Guidelines, PatternFly Design System, WoW item names):
+- **Preferred**: Truncate at last word boundary within 20 chars ("ULTRA LUXURY..." at 13 chars)
+- **Fallback**: If no word boundary found OR word boundary <4 chars, use character limit ("ABCD...")
+- **Minimum visible**: 4 characters before ellipsis (prevents "A..." confusion)
+- **Design constraint**: Keep all object names under 20 characters to avoid triggering truncation
+
+**Current spec names** (all under 20 chars):
+- "SPACE ROCKET" = 12 chars ✓
+- "PRIVATE JET" = 11 chars ✓
+- "BUSINESSMAN" = 11 chars ✓
+
+**Reasoning**: Word-boundary truncation is more readable ("LUXURY..." vs "LUXURY M..."), feels intentional not lazy, aligns with iOS/PatternFly standards.
+
+**Updated Requirements**:
+- **FR-006-021 NEW**: Object names exceeding 20 characters MUST truncate at last word boundary with "..." suffix
+- **FR-006-022 NEW**: If no word boundary found within 20 chars, truncate at character 17 and add "..."
+- **FR-006-023 NEW**: Minimum 4 characters MUST be visible before ellipsis (prevents "A..." ambiguity)
+- **Design Guideline**: All object names SHOULD be designed to fit within 20 characters (avoid truncation)
+
+---
+
 ## Requirements *(mandatory)*
 
 ### Functional Requirements
@@ -82,7 +196,20 @@ As a player, I want to collect 15-20 different object types (not just 2) so that
 - **FR-006-007**: Level 2 objects MUST be urban/business themed (coffee, laptop, chair, bicycle, car, house minimum)
 - **FR-006-008**: Level 3 objects MUST be luxury/absurd themed (yacht, mansion, jet, rocket minimum)
 - **FR-006-009**: Object values MUST scale with absurdity ($1 for penny, $300 for teacher, $5M for yacht, $2B for rocket)
-- **FR-006-010**: Spawning system MUST select from level-appropriate objects only (Level 1 doesn't spawn yachts)
+- **FR-006-010**: Spawning system MUST use cumulative weighted probability (not exclusive filtering). Level 1: 70/25/5% split, Level 2: 20/60/20%, Level 3: 10/30/60% (see Clarifications Q1)
+- **FR-006-011**: All object types MUST remain spawnable at all tiers (no exclusive filtering)
+- **FR-006-012**: Popups MUST display for 1.0 second with upward float animation (40px) and alpha fade
+- **FR-006-013**: Identical objects collected within 300ms MUST aggregate ("PENNY x3! +$3" not 3 separate popups)
+- **FR-006-014**: Maximum 5 simultaneous popups, vertically stacked with 30px spacing, oldest removed first if exceeded
+- **FR-006-015**: Object size MUST use logarithmic scaling: `size = 20 + (Math.log10(value + 1) * 50)`
+- **FR-006-016**: Maximum object size MUST be capped at 500px (prevents screen overflow)
+- **FR-006-017**: Minimum object size MUST be 30px (ensures readability and collectability)
+- **FR-006-018**: Value display MUST use K/M/B notation starting at 1,000
+- **FR-006-019**: Abbreviated values MUST show 1 decimal place ("$1.5M" not "$1.500000M")
+- **FR-006-020**: Values under 1,000 MUST display as exact integers ("$300" not "$0.3K")
+- **FR-006-021**: Object names exceeding 20 characters MUST truncate at last word boundary with "..." suffix
+- **FR-006-022**: If no word boundary found within 20 chars, truncate at character 17 and add "..."
+- **FR-006-023**: Minimum 4 characters MUST be visible before ellipsis (prevents "A..." ambiguity)
 
 ### Key Entities
 
@@ -221,7 +348,59 @@ Game transforms from "eating abstract shapes" → "CONSUMING TEACHERS AND ROCKET
 
 ---
 
-**Status**: Ready for `/speckit.plan`
+## Research Citations *(deep context)*
+
+Key insights from fetched primary sources that informed the clarifications:
+
+### From Katamari Damacy (Wikipedia - full article fetched)
+
+**Size-based mechanics, not value-based**:
+> "The game uses size, weight, and surface area to determine if an object will stick to the katamari."
+
+**Physical progression, not economic**:
+> "The player might start the game by picking up thumbtacks and ants, and slowly work up to the point where the katamari is picking up buildings, mountains, and clouds."
+
+**Objects remain in world (cumulative approach)**:
+> "As objects stick to the katamari, the katamari will grow, eventually allowing objects that were once hurdles to be picked up."
+
+**Design philosophy - 4 key points**:
+> "Takahashi was aiming for four key points: **novelty, ease of understanding, enjoyment, and humor**."
+
+**Shrinking mechanic was REMOVED**:
+> "It was not fun to shrink back down and hear the music regress to a simpler form." — Negative feedback loops tested and rejected.
+
+### From Cookie Clicker (Wikipedia + mechanics research)
+
+**Cumulative unlocking system**:
+- All buildings remain purchasable throughout game (cursors → idleverses)
+- Prices increase exponentially (15% more per purchase)
+- Milestone-based unlocks: "buying your 50th or 100th of a building can unlock powerful upgrades"
+- **Key insight**: Objects don't disappear from shop - old items remain relevant through synergies
+
+### From WoW Scrolling Combat Text (addon research)
+
+**Standard timing from 2024 addons**:
+- MikScrollingBattleText: Customizable duration, lightweight, "sliders for animation speed"
+- ScrollingCombatText: "Eight animation types, opacity, movement speed"
+- CombatTextPlus: "Spiral, Shake, Fade, Bounce, Scale, Pop modes"
+- **Industry consensus**: ~1 second duration with customizable animation speed
+
+### From Game Design Principles (Game Developer article)
+
+**Principle #3 - Announce Change**:
+> "Communicate all changes to the player... A good rule of thumb is degree of rarity. If a change occurs a hundred times in an hour, the announcement may not be required."
+
+**Principle #7 - Sound**:
+> "What sound does it make when \_\_\_\_\_ happens? If players close their eyes, the sound alone should still achieve the desired affect."
+
+**Principle #12 - Communication**:
+> "If it's a good idea but you can't communicate it correctly, it might as well be a bad idea."
+
+---
+
+**Status**: Clarified (ready for `/speckit.plan`)
 **Priority**: P3 - Week 3 (Oct 28-Nov 2)
 **Estimated Implementation**: 2-3 hours
 **Impact**: CRITICAL (this is THE "soul" problem - fixes "soulless" diagnosis)
+
+**Next Step**: Run `/speckit.plan` to incorporate clarifications into technical implementation plan

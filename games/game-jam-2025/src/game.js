@@ -317,6 +317,13 @@ class PopupTextManager {
             return new Color(1, 1, 1);    // White (common)
         }
     }
+
+    /**
+     * Clear all active popups (for level transitions)
+     */
+    clear() {
+        this.activePopups = [];
+    }
 }
 
 /**
@@ -448,6 +455,9 @@ let cameraShake = 0;               // Current shake intensity, decays automatica
 let soundManager;                  // Global SoundManager instance
 let lastTimerWarningTime = -1;     // Track last beep to prevent spam (FR-004-008)
 
+// Feature 006: Popup text system (FR-006-012)
+let popupTextManager;              // Global PopupTextManager instance
+
 // ============================================================================
 // ENGINE CALLBACKS (LittleJS requires exactly these 5 functions)
 // ============================================================================
@@ -458,6 +468,9 @@ function gameInit() {
 
     // Feature 004: Initialize sound system (FR-004-011, T005)
     soundManager = new SoundManager();
+
+    // Feature 006: Initialize popup text system (FR-006-012, T003)
+    popupTextManager = new PopupTextManager();
 
     // Feature 005: Initialize particle colors (FR-005-003, FR-005-008)
     PARTICLE_COLORS = {
@@ -482,18 +495,153 @@ function gameInit() {
     };
 
     // Initialize COLLECTIBLE_DATA now that LittleJS Color is available
+    // Feature 006: Named Collectibles with Personality (FR-006-001, FR-006-002, FR-006-003)
+    // 20 objects: Level 1 (schoolyard), Level 2 (urban), Level 3 (luxury)
     COLLECTIBLE_DATA = {
-        coin: {
-            sizeRange: [0.3, 0.4],
-            value: 10,
-            color: new Color(1, 1, 0),       // Yellow
-            spawnWeight: 0.6                  // 60% of spawns
+        // === LEVEL 1: SCHOOLYARD (8 objects) ===
+        penny: {
+            name: 'PENNY',
+            value: 1,
+            level: 1,
+            sizeRange: [0.3, 0.35],
+            color: new Color(0.8, 0.5, 0.2)  // Copper
         },
-        customer: {
-            sizeRange: [0.6, 0.8],
-            value: 50,
-            color: new Color(0, 0.5, 1),     // Blue
-            spawnWeight: 0.4                  // 40% of spawns
+        gum: {
+            name: 'GUM',
+            value: 10,
+            level: 1,
+            sizeRange: [0.35, 0.4],
+            color: new Color(1, 0.4, 0.6)    // Pink
+        },
+        crayon: {
+            name: 'CRAYON',
+            value: 15,
+            level: 1,
+            sizeRange: [0.35, 0.4],
+            color: new Color(0.2, 0.4, 1)    // Blue
+        },
+        homework: {
+            name: 'HOMEWORK',
+            value: 25,
+            level: 1,
+            sizeRange: [0.4, 0.5],
+            color: new Color(0.9, 0.9, 0.9)  // White paper
+        },
+        backpack: {
+            name: 'BACKPACK',
+            value: 75,
+            level: 1,
+            sizeRange: [0.5, 0.6],
+            color: new Color(0.3, 0.3, 0.8)  // Blue
+        },
+        basketball: {
+            name: 'BASKETBALL',
+            value: 100,
+            level: 1,
+            sizeRange: [0.55, 0.65],
+            color: new Color(1, 0.5, 0)      // Orange
+        },
+        desk: {
+            name: 'DESK',
+            value: 200,
+            level: 1,
+            sizeRange: [0.7, 0.9],
+            color: new Color(0.6, 0.4, 0.2)  // Brown wood
+        },
+        teacher: {
+            name: 'TEACHER',
+            value: 300,
+            level: 1,
+            sizeRange: [0.8, 1.0],
+            color: new Color(0.9, 0.7, 0.5)  // Skin tone (absurdity begins!)
+        },
+
+        // === LEVEL 2: URBAN/DOWNTOWN (7 objects) ===
+        coffee: {
+            name: 'COFFEE',
+            value: 100,
+            level: 2,
+            sizeRange: [0.6, 0.7],
+            color: new Color(0.4, 0.2, 0.1)  // Coffee brown
+        },
+        officeChair: {
+            name: 'OFFICE CHAIR',
+            value: 300,
+            level: 2,
+            sizeRange: [0.8, 1.0],
+            color: new Color(0.2, 0.2, 0.2)  // Black
+        },
+        bicycle: {
+            name: 'BICYCLE',
+            value: 500,
+            level: 2,
+            sizeRange: [1.0, 1.3],
+            color: new Color(0.8, 0, 0)      // Red
+        },
+        laptop: {
+            name: 'LAPTOP',
+            value: 1500,
+            level: 2,
+            sizeRange: [0.7, 0.9],
+            color: new Color(0.7, 0.7, 0.7)  // Silver
+        },
+        businessman: {
+            name: 'BUSINESSMAN',
+            value: 2000,
+            level: 2,
+            sizeRange: [0.9, 1.1],
+            color: new Color(0.2, 0.2, 0.3)  // Dark suit
+        },
+        car: {
+            name: 'CAR',
+            value: 5000,
+            level: 2,
+            sizeRange: [1.5, 2.0],
+            color: new Color(0.1, 0.3, 0.6)  // Blue car
+        },
+        house: {
+            name: 'HOUSE',
+            value: 20000,
+            level: 2,
+            sizeRange: [2.5, 3.5],
+            color: new Color(0.8, 0.6, 0.4)  // Beige house
+        },
+
+        // === LEVEL 3: LUXURY/OLIGARCH (5 objects) ===
+        yacht: {
+            name: 'YACHT',
+            value: 500000,
+            level: 3,
+            sizeRange: [3.0, 4.5],
+            color: new Color(0.9, 0.9, 1)    // White yacht
+        },
+        mansion: {
+            name: 'MANSION',
+            value: 1000000,
+            level: 3,
+            sizeRange: [4.0, 5.5],
+            color: new Color(0.9, 0.8, 0.6)  // Cream mansion
+        },
+        helicopter: {
+            name: 'HELICOPTER',
+            value: 15000000,
+            level: 3,
+            sizeRange: [3.5, 5.0],
+            color: new Color(0.3, 0.3, 0.3)  // Dark grey
+        },
+        privateJet: {
+            name: 'PRIVATE JET',
+            value: 50000000,
+            level: 3,
+            sizeRange: [5.0, 7.0],
+            color: new Color(0.8, 0.8, 0.9)  // Light grey/white
+        },
+        spaceRocket: {
+            name: 'SPACE ROCKET',
+            value: 2000000000,
+            level: 3,
+            sizeRange: [7.0, 10.0],
+            color: new Color(0.9, 0.9, 0.9)  // White rocket
         }
     };
 
@@ -509,6 +657,11 @@ function gameInit() {
 function gameUpdate() {
     // Feature 005: Particle budget management (FR-005-013)
     updateParticleBudget();
+
+    // Feature 006: Update popup text animations (FR-006-012, T003)
+    if (popupTextManager) {
+        popupTextManager.update();
+    }
 
     // Camera follow player with lerp (FR-013, research.md R3)
     if (player) {
@@ -628,6 +781,11 @@ function gameRender() {
 function gameRenderPost() {
     // Screen-space rendering (HUD, UI)
     if (!player) return;
+
+    // Feature 006: Render popup text (FR-006-012, T003)
+    if (popupTextManager) {
+        popupTextManager.render();
+    }
 
     // Calculate display values
     const sizeMultiplier = (player.size.x / 0.5).toFixed(1);
@@ -913,6 +1071,11 @@ function startLevel(levelIndex) {
         }
     });
 
+    // Feature 006: Clear popup text on level transitions (FR-006-017, T003)
+    if (popupTextManager) {
+        popupTextManager.clear();
+    }
+
     // Spawn new collectibles for this level (T025)
     spawnCollectiblesForLevel(config);
 
@@ -994,8 +1157,11 @@ function spawnCollectiblesForLevel(config) {
         // Clamp to config range
         size = Math.max(config.collectibleSizeMin, Math.min(config.collectibleSizeMax, size));
 
-        // Random type (60% coin, 40% customer from Feature 001)
-        const type = Math.random() < 0.6 ? 'coin' : 'customer';
+        // Feature 006: Select random object type from all 20 objects (FR-006-001, T005)
+        // Get all object keys and pick one at random
+        const objectKeys = Object.keys(COLLECTIBLE_DATA);
+        const randomIndex = Math.floor(Math.random() * objectKeys.length);
+        const type = objectKeys[randomIndex];
 
         // Boundary check: ensure collectible fits within play area
         const halfSize = size / 2;
@@ -1183,6 +1349,14 @@ class PlayerBall extends EngineObject {
 
         // Destroy collectible (FR-009)
         collectible.destroy();
+
+        // Feature 006: Show collection popup (FR-006-003, T004)
+        if (popupTextManager) {
+            // Get object data to access name field
+            const objectData = COLLECTIBLE_DATA[collectible.type];
+            const objectName = objectData ? objectData.name : collectible.type.toUpperCase();
+            popupTextManager.showCollection(objectName, collectible.value, collectible.pos);
+        }
 
         // Feature 005: Particle burst on collection (FR-005-001, FR-005-002)
         spawnCollectionParticles(collectible.pos, collectible.value);
