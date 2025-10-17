@@ -1062,16 +1062,16 @@ class PlayerBall extends EngineObject {
      * Can be manually triggered for testing: player.onTierUp()
      */
     onTierUp() {
-        // TEST: SUPER VISIBLE particles - BIG, SLOW, LONG DURATION
+        // TEST: ULTRA MASSIVE particles - GIGANTIC, VERY SLOW, VERY LONG
         new ParticleEmitter(
             this.pos, 0,              // emitPos, emitAngle
-            2, 0.1, 100, PI*2,        // emitSize (2 = bigger), emitTime, rate, cone
+            3, 0.2, 100, PI*2,        // emitSize (3 = MASSIVE!), emitTime, rate, cone
             tile(0, 16),              // tileIndex, tileSize
-            hsl(0.1,1,0.5),   hsl(0.15,1,0.5),   // colorStartA, colorStartB (golden)
-            hsl(0.1,1,0.5,0), hsl(0.15,1,0.5,0), // colorEndA, colorEndB (fade)
-            3, 2, 1, 2, 0,            // time (3s!), sizeStart (2 = HUGE!), sizeEnd (1), speed (2 = slower), angleSpeed
-            .95, 1, 0, PI*2,          // damping (.95 = linger), angleDamping, gravityScale, cone
-            .02, .5, false, true      // fadeRate (.02 = slow fade), randomness, collide, additive
+            hsl(0.1,1,0.6),   hsl(0.15,1,0.6),   // colorStartA, colorStartB (BRIGHT golden)
+            hsl(0.1,1,0.3,0), hsl(0.15,1,0.3,0), // colorEndA, colorEndB (fade)
+            5, 3, 2, 1, 0,            // time (5s!), sizeStart (3 = GIGANTIC!), sizeEnd (2 = still huge), speed (1 = very slow), angleSpeed
+            .98, 1, 0, PI*2,          // damping (.98 = barely slows), angleDamping, gravityScale, cone
+            .01, .5, false, true      // fadeRate (.01 = VERY slow fade), randomness, collide, additive
         );
 
         // Feature 005: Massive particle explosion (100 particles, golden-rainbow)
