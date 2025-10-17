@@ -1067,6 +1067,20 @@ class PlayerBall extends EngineObject {
      * Can be manually triggered for testing: player.onTierUp()
      */
     onTierUp() {
+        // TEST: Ultra-simple particle test with LittleJS example pattern
+        console.log('Creating test particles at position:', this.pos);
+        const testEmitter = new ParticleEmitter(
+            this.pos, 0,              // emitPos, emitAngle
+            1, 0.1, 100, PI*2,        // emitSize, emitTime, rate, cone
+            tile(0, 16),              // tileInfo
+            new Color(1, 1, 0, 1),    // colorStartA
+            new Color(1, 0.5, 0, 1),  // colorStartB
+            new Color(1, 1, 0, 0),    // colorEndA
+            new Color(1, 0, 0, 0),    // colorEndB
+            1.0, 0.5, 0.1             // particleTime, sizeStart, sizeEnd
+        );
+        console.log('Test emitter created:', testEmitter);
+
         // Feature 005: Massive particle explosion (100 particles, golden-rainbow)
         spawnTierUpParticles(this.pos);
 
