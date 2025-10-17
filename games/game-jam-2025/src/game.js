@@ -1062,6 +1062,18 @@ class PlayerBall extends EngineObject {
      * Can be manually triggered for testing: player.onTierUp()
      */
     onTierUp() {
+        // TEST: EXACT working pattern from LittleJS starter example
+        new ParticleEmitter(
+            this.pos, 0,              // emitPos, emitAngle
+            1, 0.1, 100, PI*2,        // emitSize, emitTime, rate, cone
+            tile(0, 16),              // tileIndex, tileSize
+            hsl(0.1,1,0.5),   hsl(0.15,1,0.5),   // colorStartA, colorStartB (golden)
+            hsl(0.1,1,0.5,0), hsl(0.15,1,0.5,0), // colorEndA, colorEndB (fade)
+            1, .5, .2, 5, 0,          // time, sizeStart, sizeEnd, speed, angleSpeed
+            .9, 1, 0, PI*2,           // damping, angleDamping, gravityScale, cone
+            .05, .5, false, true      // fadeRate, randomness, collide, additive
+        );
+
         // Feature 005: Massive particle explosion (100 particles, golden-rainbow)
         spawnTierUpParticles(this.pos);
 
