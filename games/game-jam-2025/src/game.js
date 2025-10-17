@@ -62,6 +62,109 @@ const STATE = {
 };
 
 // ============================================================================
+// FEATURE 004: ZZFX SOUND SYSTEM (FR-004)
+// ============================================================================
+// ZzFX parameters from Constitution Article VII, Section 7.1, FR-033
+const ZZFX_SOUNDS = {
+    collect: [,,537,.02,.02,.22,1,1.59,-6.98,4.97],
+    tierUp: [,,925,.04,.3,.6,1,.3,,6.27,-184,.09,.17],
+    victory: [1.5,,262,,.2,.4,1,1.8,,,,,,,,.5,.1],
+    defeat: [1.5,.8,270,,.1,,1,1.5,,,,,,,,.1,.01],
+    timerWarning: [,,400,.01,,.05,,1.5,,,,,,,,.1]
+};
+
+/**
+ * SoundManager - Manages all game audio via ZzFX
+ * FR-004-001: Pre-caches all sounds for instant playback
+ * FR-004-012: Graceful degradation if audio fails
+ */
+class SoundManager {
+    constructor() {
+        try {
+            // Pre-cache Sound objects (FR-004-001)
+            this.sound_collect = new Sound(ZZFX_SOUNDS.collect);
+            this.sound_tierUp = new Sound(ZZFX_SOUNDS.tierUp);
+            this.sound_victory = new Sound(ZZFX_SOUNDS.victory);
+            this.sound_defeat = new Sound(ZZFX_SOUNDS.defeat);
+            this.sound_timerWarning = new Sound(ZZFX_SOUNDS.timerWarning);
+            console.log('SoundManager initialized successfully');
+        } catch (error) {
+            // FR-004-018: Graceful degradation
+            console.warn('Audio failed to initialize:', error);
+            this.sound_collect = null;
+            this.sound_tierUp = null;
+            this.sound_victory = null;
+            this.sound_defeat = null;
+            this.sound_timerWarning = null;
+        }
+    }
+
+    /**
+     * Clamp pitch to human-audible range (FR-004-003-CLARIFIED)
+     * Industry standard: 0.5x-3.0x (Unreal Engine uses 0.4x-2.0x)
+     */
+    clampPitch(pitch) {
+        return Math.max(0.5, Math.min(3.0, pitch));
+    }
+
+    /**
+     * Play collection sound with pitch-scaling and volume management
+     * FR-004-003: Pitch scales with value (high for pennies, low for yachts)
+     * FR-004-004: Positional audio with distance falloff
+     * FR-004-013: Volume scales inversely with simultaneous collections
+     */
+    playCollect(pos, value, collectionsThisFrame = 1) {
+        if (!this.sound_collect) return; // Silent if audio failed
+
+        // Pitch scales with value: high pitch (pennies) → low pitch (yachts)
+        const rawPitch = 1 + (value * 0.001);
+        const pitch = this.clampPitch(rawPitch);
+
+        // Volume scales inversely with simultaneous collections to prevent clipping
+        const volume = Math.max(0.3, 1.0 / Math.sqrt(collectionsThisFrame));
+
+        // Positional audio (LittleJS defaults: range=40, taper=0.7)
+        this.sound_collect.play(pos, volume, pitch);
+    }
+
+    /**
+     * Play tier-up fanfare (FR-004-005)
+     * NOTE: Tier system (FR-047) not implemented yet - placeholder for future
+     */
+    playTierUp(pos) {
+        if (!this.sound_tierUp) return;
+        this.sound_tierUp.play(pos, 1.2); // 20% louder than collections
+    }
+
+    /**
+     * Play victory fanfare (FR-004-006)
+     * Center position, very loud, celebratory
+     */
+    playVictory() {
+        if (!this.sound_victory) return;
+        this.sound_victory.play(vec2(0, 0), 1.5); // Center, 150% volume
+    }
+
+    /**
+     * Play defeat sound (FR-004-007)
+     * Center position, normal volume, comedic
+     */
+    playDefeat() {
+        if (!this.sound_defeat) return;
+        this.sound_defeat.play(vec2(0, 0), 1.0); // Center, 100% volume
+    }
+
+    /**
+     * Play timer warning beep (FR-004-008)
+     * Quiet, not annoying, creates urgency
+     */
+    playTimerWarning() {
+        if (!this.sound_timerWarning) return;
+        this.sound_timerWarning.play(vec2(0, 0), 0.8); // Center, quieter
+    }
+}
+
+// ============================================================================
 // SCREEN SHAKE CONSTANTS (Feature 003: FR-030)
 // ============================================================================
 // Tuned values - ADJUSTED during playtesting for visibility
@@ -95,6 +198,10 @@ let transitionStartTime = 0;       // LittleJS `time` when transition screen sho
 // Feature 003: Screen shake system (FR-030-007)
 let cameraShake = 0;               // Current shake intensity, decays automatically
 
+// Feature 004: Sound system (FR-004-011)
+let soundManager;                  // Global SoundManager instance
+let lastTimerWarningTime = -1;     // Track last beep to prevent spam (FR-004-008)
+
 // ============================================================================
 // ENGINE CALLBACKS (LittleJS requires exactly these 5 functions)
 // ============================================================================
@@ -102,6 +209,9 @@ let cameraShake = 0;               // Current shake intensity, decays automatica
 function gameInit() {
     // Called when starting or restarting game
     console.log('Tiny Tycoon - Game initialized');
+
+    // Feature 004: Initialize sound system (FR-004-011, T005)
+    soundManager = new SoundManager();
 
     // Initialize COLLECTIBLE_DATA now that LittleJS Color is available
     COLLECTIBLE_DATA = {
@@ -139,10 +249,35 @@ function gameUpdate() {
         const elapsed = time - levelStartTime;
         remainingTime = Math.max(0, LEVEL_CONFIG[currentLevel].timeLimit - elapsed);
 
+        // Feature 004: Timer warning beep at last 10 seconds (FR-004-008, T021)
+        if (remainingTime <= 10 && remainingTime > 0) {
+            const currentSecond = Math.floor(remainingTime);
+            const lastSecond = Math.floor(lastTimerWarningTime);
+
+            // Play beep when second changes (prevents multiple beeps per second)
+            if (currentSecond !== lastSecond) {
+                if (soundManager) {
+                    soundManager.playTimerWarning();
+                }
+                lastTimerWarningTime = remainingTime;
+            }
+        } else {
+            lastTimerWarningTime = -1; // Reset when above 10 seconds
+        }
+
         // Lose condition: time expired without reaching target
         if (remainingTime <= 0 && player && player.size.x < LEVEL_CONFIG[currentLevel].targetSize) {
             levelState = STATE.DEFEAT;
             transitionStartTime = time;
+
+            // Feature 004: Stop timer warning (FR-004-009, T023)
+            lastTimerWarningTime = -1;
+
+            // Feature 004: Defeat sound (FR-004-007, T016)
+            if (soundManager) {
+                soundManager.playDefeat();
+            }
+
             console.log('DEFEAT! Time expired!');
         }
     }
@@ -653,6 +788,11 @@ class PlayerBall extends EngineObject {
         // Destroy collectible (FR-009)
         collectible.destroy();
 
+        // Feature 004: Collection sound (FR-004-003, FR-004-004, T007)
+        if (soundManager) {
+            soundManager.playCollect(collectible.pos, collectible.value);
+        }
+
         // Feature 003: Value-scaled screen shake (FR-030-001, FR-030-002, FR-030-003)
         const shakePower = SHAKE_BASE + (collectible.value * SHAKE_VALUE_MULTIPLIER);
         cameraShake = Math.min(cameraShake + shakePower, SHAKE_MAX); // Accumulate and clamp
@@ -662,6 +802,14 @@ class PlayerBall extends EngineObject {
             this.size.x >= LEVEL_CONFIG[currentLevel].targetSize) {
             levelState = STATE.VICTORY;
             transitionStartTime = time;
+
+            // Feature 004: Stop timer warning (FR-004-009, T022)
+            lastTimerWarningTime = -1;
+
+            // Feature 004: Victory sound (FR-004-006, T015)
+            if (soundManager) {
+                soundManager.playVictory();
+            }
 
             // Feature 003: Victory shake (FR-030-005, FR-030-009)
             cameraShake = Math.min(cameraShake + SHAKE_VICTORY, SHAKE_MAX);
