@@ -142,25 +142,22 @@ function gameUpdate() {
 function gameUpdatePost() {
     // Post-update (after physics and object updates)
 
-    // Feature 002: Soft boundary enforcement (T029)
+    // Feature 002: Boundary enforcement (T029 - modified to hard boundaries for better gameplay)
     if (player) {
         const config = LEVEL_CONFIG[currentLevel];
         const playAreaHalfSize = config.playAreaSize / 2;
 
-        // Calculate viewport dimensions in world units
-        const viewportHalfWidth = mainCanvasSize.x / (2 * cameraScale);
-        const viewportHalfHeight = mainCanvasSize.y / (2 * cameraScale);
-
-        // Clamp camera to keep viewport within play area
-        cameraPos.x = clamp(
-            cameraPos.x,
-            -playAreaHalfSize + viewportHalfWidth,
-            playAreaHalfSize - viewportHalfWidth
+        // Clamp player position to play area (hard boundaries)
+        const playerHalfSize = player.size.x / 2;
+        player.pos.x = clamp(
+            player.pos.x,
+            -playAreaHalfSize + playerHalfSize,
+            playAreaHalfSize - playerHalfSize
         );
-        cameraPos.y = clamp(
-            cameraPos.y,
-            -playAreaHalfSize + viewportHalfHeight,
-            playAreaHalfSize - viewportHalfHeight
+        player.pos.y = clamp(
+            player.pos.y,
+            -playAreaHalfSize + playerHalfSize,
+            playAreaHalfSize - playerHalfSize
         );
     }
 }
