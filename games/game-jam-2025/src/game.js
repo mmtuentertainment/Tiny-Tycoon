@@ -392,6 +392,7 @@ function handleTransition() {
 // ============================================================================
 
 // Feature 002: Level-specific collectible spawning (T023, T026)
+// Fixed to ensure progressive size distribution for winnable gameplay
 function spawnCollectiblesForLevel(config) {
     const spawnCount = Math.floor(
         config.collectibleSpawnCount.min +
@@ -402,6 +403,8 @@ function spawnCollectiblesForLevel(config) {
     const playAreaHalfSize = config.playAreaSize / 2;
 
     let spawned = 0;
+    const playerStartSize = config.startingPlayerSize; // 0.5
+
     for (let i = 0; i < spawnCount; i++) {
         // Grid cell coordinates
         const gridX = i % gridSize;
@@ -416,9 +419,24 @@ function spawnCollectiblesForLevel(config) {
         const offsetY = (Math.random() - 0.5) * cellSize * 0.8;
         const spawnPos = vec2(cellCenterX + offsetX, cellCenterY + offsetY);
 
-        // Random size within level range (T026 - use config sizes)
-        const size = config.collectibleSizeMin +
-                    Math.random() * (config.collectibleSizeMax - config.collectibleSizeMin);
+        // FIXED: Progressive size distribution to ensure winnable gameplay
+        // Create size tiers: 40% small (immediately collectable), 40% medium, 20% large
+        const tier = Math.random();
+        let size;
+        if (tier < 0.4) {
+            // Small tier: Always collectable by starting player (0.3 to 0.45)
+            size = playerStartSize * 0.6 + Math.random() * playerStartSize * 0.3;
+        } else if (tier < 0.8) {
+            // Medium tier: Collectable after some growth (0.5 to targetSize * 0.4)
+            const midPoint = (playerStartSize + config.targetSize) / 2;
+            size = playerStartSize + Math.random() * (midPoint - playerStartSize);
+        } else {
+            // Large tier: Collectable near end (targetSize * 0.4 to targetSize * 0.9)
+            size = config.targetSize * 0.4 + Math.random() * config.targetSize * 0.5;
+        }
+
+        // Clamp to config range
+        size = Math.max(config.collectibleSizeMin, Math.min(config.collectibleSizeMax, size));
 
         // Random type (60% coin, 40% customer from Feature 001)
         const type = Math.random() < 0.6 ? 'coin' : 'customer';
@@ -432,7 +450,7 @@ function spawnCollectiblesForLevel(config) {
         }
     }
 
-    console.log(`Level ${config.levelNumber}: Spawned ${spawned} collectibles (size ${config.collectibleSizeMin}-${config.collectibleSizeMax})`);
+    console.log(`Level ${config.levelNumber}: Spawned ${spawned} collectibles with progressive sizing`);
 }
 
 // Legacy spawn function (Feature 001 - will be removed after full migration)
