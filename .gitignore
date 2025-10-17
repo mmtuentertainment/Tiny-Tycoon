@@ -18,6 +18,7 @@ Thumbs.db
 *.swp
 *.swo
 *~
+*.Zone.Identifier
 
 # IDE
 .vscode/
@@ -62,6 +63,11 @@ ENV/
 # Spec Kit generated files (optional - uncomment to ignore)
 # .specify/specs/
 
+# Spec Kit setup markers (one-time use)
+MCP-INSTALLATION-COMPLETE.md
+SETUP-COMPLETE.md
+SPEC-KIT-SETUP-COMPLETE.md
+
 # Claude Code sensitive data (recommended to ignore)
 .claude/settings.local.json
 .claude/*.local.*
@@ -75,6 +81,11 @@ puppeteer-*
 
 # Keep structure folders
 !.gitkeep
+
+# Workspace directories (for future use, currently empty)
+prototypes/
+shared/
+tools/
 
 # Backup files
 *.bak

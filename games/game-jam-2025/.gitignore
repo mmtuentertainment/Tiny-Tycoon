@@ -37,3 +37,6 @@ test-*.html
 SPEC-KIT-SETUP-COMPLETE.md
 MCP-INSTALLATION-COMPLETE.md
 SETUP-COMPLETE.md
+
+# LittleJS symlink (we use vendor/ for deployment)
+LittleJS
