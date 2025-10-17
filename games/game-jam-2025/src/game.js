@@ -627,13 +627,26 @@ function spawnTierUpParticles(pos) {
     // Fixed 100 particles, reduced by LOD if needed (FR-005-007)
     const particleCount = Math.floor(100 * emissionMultiplier);
 
-    if (particleCount < 1) return; // Skip if LOD too aggressive
+    console.log('=== SPAWN TIER UP PARTICLES ===');
+    console.log('Position:', pos);
+    console.log('Particle count:', particleCount);
+    console.log('Emission multiplier:', emissionMultiplier);
+    console.log('PARTICLE_COLORS:', PARTICLE_COLORS);
+    console.log('PARTICLE_CONFIG:', PARTICLE_CONFIG);
+
+    if (particleCount < 1) {
+        console.log('SKIPPING: particle count < 1');
+        return; // Skip if LOD too aggressive
+    }
 
     const config = PARTICLE_CONFIG.tierUp;
     const colors = PARTICLE_COLORS.tierUp;
 
+    console.log('Config:', config);
+    console.log('Colors:', colors);
+
     // Create massive explosion (FR-005-008-CLARIFIED: golden + rainbow variation)
-    new ParticleEmitter(
+    const emitter = new ParticleEmitter(
         pos,                       // Position at player center
         0,                         // Angle (0 = up, but 360° spread so doesn't matter)
         1.0,                       // Emit size (larger cone)
@@ -648,8 +661,11 @@ function spawnTierUpParticles(pos) {
         config.gravityScale, config.particleConeAngle, config.fadeRate
     );
 
+    console.log('ParticleEmitter created:', emitter);
+
     // Track for budget management
     activeParticleCount += particleCount;
+    console.log('Active particle count:', activeParticleCount);
 }
 
 /**
