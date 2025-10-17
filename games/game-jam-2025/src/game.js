@@ -545,7 +545,7 @@ class PlayerBall extends EngineObject {
 
     update() {
         // WASD and Arrow key input (FR-002, FR-003)
-        const moveSpeed = 0.03;  // Very slow for precise control
+        const moveSpeed = 0.08;  // Increased from 0.03 for better playability
         const moveInput = vec2(
             (keyIsDown('KeyD') || keyIsDown('ArrowRight')) -
             (keyIsDown('KeyA') || keyIsDown('ArrowLeft')),
