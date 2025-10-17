@@ -599,16 +599,23 @@ function spawnMagneticTrailParticles(pos, count) {
     const config = PARTICLE_CONFIG.magneticTrail;
     const colors = PARTICLE_COLORS.magneticTrail;
 
-    // Create subtle trail particles - working 13-parameter pattern (FR-005-010-CLARIFIED)
+    // Create subtle trail particles - FULL parameter list (FR-005-010-CLARIFIED)
     new ParticleEmitter(
-        pos, PI,                   // emitPos, emitAngle
-        0.2, config.emitTime,      // emitSize, emitTime (0.01)
-        particleCount, config.emitConeAngle,  // emitRate (1-2), emitConeAngle (0.5)
-        tile(0, 16),               // tileInfo (use player sprite)
-        colors.startA, colors.startB,  // colorStartA, colorStartB
-        colors.endA, colors.endB,      // colorEndA, colorEndB
-        config.particleTime,       // particleTime (0.3s)
-        config.sizeStart, config.sizeEnd  // sizeStart, sizeEnd
+        pos, PI,                   // 1-2: position, angle
+        0.2, config.emitTime,      // 3-4: emitSize, emitTime (0.01)
+        particleCount, config.emitConeAngle,  // 5-6: emitRate (1-2), emitConeAngle (0.5)
+        tile(0, 16),               // 7: tileInfo (use player sprite)
+        colors.startA, colors.startB,  // 8-9: colorStartA, colorStartB
+        colors.endA, colors.endB,      // 10-11: colorEndA, colorEndB
+        config.particleTime,       // 12: particleTime (0.3s)
+        config.sizeStart, config.sizeEnd,  // 13-14: sizeStart, sizeEnd
+        config.speed,              // 15: speed (0.5 = slow trail!)
+        config.angleVelocity,      // 16: angleSpeed (0 = no rotation)
+        config.damping,            // 17: damping (0.95)
+        config.angleDamping,       // 18: angleDamping (1)
+        config.gravityScale,       // 19: gravityScale (0)
+        config.particleConeAngle,  // 20: particleConeAngle (0.5)
+        config.fadeRate            // 21: fadeRate (0.2)
     );
 
     // Track for budget management
@@ -628,16 +635,23 @@ function spawnTierUpParticles(pos) {
     const config = PARTICLE_CONFIG.tierUp;
     const colors = PARTICLE_COLORS.tierUp;
 
-    // Create massive explosion - working 13-parameter pattern (FR-005-008-CLARIFIED)
+    // Create massive explosion - FULL parameter list (FR-005-008-CLARIFIED)
     new ParticleEmitter(
-        pos, 0,                    // emitPos, emitAngle
-        1, config.emitTime,        // emitSize, emitTime (0.01)
-        particleCount, config.emitConeAngle,  // emitRate (100), emitConeAngle (PI*2)
-        tile(0, 16),               // tileInfo (use player sprite)
-        colors.startA, colors.startB,  // colorStartA, colorStartB
-        colors.endA, colors.endB,      // colorEndA, colorEndB
-        config.particleTime,       // particleTime (1.0s)
-        config.sizeStart, config.sizeEnd  // sizeStart, sizeEnd
+        pos, 0,                    // 1-2: position, angle
+        1, config.emitTime,        // 3-4: emitSize, emitTime (0.01)
+        particleCount, config.emitConeAngle,  // 5-6: emitRate (100), emitConeAngle (PI*2)
+        tile(0, 16),               // 7: tileInfo (use player sprite)
+        colors.startA, colors.startB,  // 8-9: colorStartA, colorStartB
+        colors.endA, colors.endB,      // 10-11: colorEndA, colorEndB
+        config.particleTime,       // 12: particleTime (1.0s)
+        config.sizeStart, config.sizeEnd,  // 13-14: sizeStart, sizeEnd
+        config.speed,              // 15: speed (5 = fast burst!)
+        config.angleVelocity,      // 16: angleSpeed (0 = no rotation)
+        config.damping,            // 17: damping (0.9)
+        config.angleDamping,       // 18: angleDamping (1)
+        config.gravityScale,       // 19: gravityScale (0)
+        config.particleConeAngle,  // 20: particleConeAngle (PI*2)
+        config.fadeRate            // 21: fadeRate (0.05)
     );
 
     // Track for budget management
@@ -659,16 +673,23 @@ function spawnCollectionParticles(pos, value) {
     const config = PARTICLE_CONFIG.collection;
     const colors = PARTICLE_COLORS.collection;
 
-    // Create particle burst - working 13-parameter pattern (FR-005-003, FR-005-006)
+    // Create particle burst - FULL parameter list (FR-005-003, FR-005-006)
     new ParticleEmitter(
-        pos, PI,                   // emitPos, emitAngle (PI = down, upward burst)
-        0.5, config.emitTime,      // emitSize, emitTime (0.01)
-        particleCount, config.emitConeAngle,  // emitRate (logarithmic), emitConeAngle (PI)
-        tile(0, 16),               // tileInfo (use player sprite)
-        colors.startA, colors.startB,  // colorStartA, colorStartB
-        colors.endA, colors.endB,      // colorEndA, colorEndB
-        config.particleTime,       // particleTime (0.5s)
-        config.sizeStart, config.sizeEnd  // sizeStart, sizeEnd
+        pos, PI,                   // 1-2: position, angle (PI = down, upward burst)
+        0.5, config.emitTime,      // 3-4: emitSize, emitTime (0.01)
+        particleCount, config.emitConeAngle,  // 5-6: emitRate (logarithmic), emitConeAngle (PI)
+        tile(0, 16),               // 7: tileInfo (use player sprite)
+        colors.startA, colors.startB,  // 8-9: colorStartA, colorStartB
+        colors.endA, colors.endB,      // 10-11: colorEndA, colorEndB
+        config.particleTime,       // 12: particleTime (0.5s)
+        config.sizeStart, config.sizeEnd,  // 13-14: sizeStart, sizeEnd
+        config.speed,              // 15: speed (3 = medium burst!)
+        config.angleVelocity,      // 16: angleSpeed (0 = no rotation)
+        config.damping,            // 17: damping (0.92)
+        config.angleDamping,       // 18: angleDamping (1)
+        config.gravityScale,       // 19: gravityScale (0)
+        config.particleConeAngle,  // 20: particleConeAngle (PI)
+        config.fadeRate            // 21: fadeRate (0.1)
     );
 
     // Track for budget management
