@@ -207,7 +207,15 @@ if (levelState === STATE.PLAYING &&
 
 ### TASK-007: Playtest and tune shake constants (Priority: P3, Time: 10-20m)
 
-**Status**: [x] DONE (Ready for user playtesting, constants can be adjusted as needed)
+**Status**: [x] DONE
+
+**Tuning Results**:
+- Original values too subtle (not visible during gameplay)
+- Increased SHAKE_BASE: 0.05 → 0.3 (6x)
+- Increased SHAKE_VALUE_MULTIPLIER: 0.0001 → 0.001 (10x)
+- Increased SHAKE_VICTORY: 0.5 → 2.0 (4x)
+- Increased SHAKE_MAX: 2.5 → 5.0 (2x)
+- User confirmed: "it good" ✅
 
 **Description**: Manual playtesting to verify shake feels good, adjust constants if needed
 
