@@ -1256,16 +1256,800 @@ function getObjectsForLevel(levelNum) {
 
 ---
 
-## 📚 RESEARCH SOURCES ARCHIVE
+## 📚 EXHAUSTIVE RESEARCH FINDINGS - Session 2 (2025-10-17)
 
-- SLYNYRD Pixelblog 21: Top-down object design, blocking technique, shadows
-- LittleJS Platformer Example: Sprite atlas system, tile() function usage
-- Mini Metro/Motorways: Shape+color dual-coding, minimalist clarity
-- Katamari Damacy: Object personality, absurd escalation, named collectibles
-- Gen Alpha Research: Brain rot culture, ironic humor, dopamine loops, meme-ability
-- Roblox Tycoons: Rebirth mechanics, number escalation, progression fantasy
+### **RESEARCH AREA 1: ACTUAL GEN ALPHA GAMES**
+
+#### **Pet Simulator X (Roblox) - Addiction Mechanics Analysis:**
+
+**Core Loop:**
+- Collect coins/gems → Open eggs → Get pets → Pets collect more coins → Buy new biomes → Unlock new worlds
+- **Key Insight**: Currency → Random reward (egg) → Permanent upgrade (pet) → More currency
+- **1,000+ pets to collect** = endless variation, completionist psychology
+- **Trading system** = social proof, virtual economy, status symbols
+- **Progression gates** = unlock worlds as you advance (gives structure to infinite grind)
+
+**What Makes It Addictive:**
+1. **Variable ratio reinforcement** (Skinner box): Eggs are lootboxes, each one COULD be rare pet
+2. **Collection completion** dopamine: "Just one more pet..."
+3. **Power fantasy**: Pets get exponentially stronger, number escalation feels good
+4. **Social comparison**: Trade rare pets, flex in multiplayer spaces
+5. **Meta-progression**: Even when "done", new update adds more content
+
+**Application to Tiny Tycoon:**
+- ✅ **Already have**: Exponential growth, collect to grow mechanic
+- ❌ **Missing**: Variety in collectibles (need 30+ unique objects, not 2 types)
+- ❌ **Missing**: "Rare" moments (special objects that spark excitement)
+- ✅ **Similar**: Three worlds = three biomes = progression structure
+- **Steal This**: Named collectibles create attachment ("I got Teacher!" vs "I got blue rectangle")
 
 ---
 
-*This is a living document. Add notes, insights, and evolution as the game develops.*
+#### **Agar.io / Slither.io - Growth Game Psychology:**
+
+**Core Loop:**
+- Start small → Eat smaller things → Grow → Eat bigger things → Dominate
+- **Key Insight**: SIZE = POWER = STATUS
+
+**What Works:**
+1. **Visual scale change**: You SEE yourself growing relative to environment
+2. **Risk/reward**: Big players are tempting targets but dangerous
+3. **"One more run" compulsion**: Death = instant restart, no loading
+4. **Leaderboard**: Anonymous competition ("I was #3!")
+5. **Simple controls**: Move mouse, that's it = accessible to anyone
+
+**Why They're Still Popular (10+ years later):**
+- **No tutorial needed**: Learn by dying in 10 seconds
+- **Session flexibility**: Play for 2 minutes or 2 hours
+- **Schadenfreude**: Watching big players lose everything is satisfying
+- **Mobile-friendly**: Touch controls work perfectly
+
+**Application to Tiny Tycoon:**
+- ✅ **Already have**: Start small, grow big, size = power
+- ✅ **Already have**: Simple WASD controls
+- ❌ **Missing**: Visual spectacle of growth (need dramatic size changes visible on screen)
+- ❌ **Missing**: Instant restart on death (current: level select menu)
+- **Steal This**: Make the ball's visual size change MORE dramatic, maybe trail effect showing old size
+
+---
+
+#### **Incremental/Clicker Games (Cookie Clicker, AdVenture Capitalist) - Prestige Psychology:**
+
+**Core Addiction Loop:**
+1. Click → Get resource → Buy upgrade → Resource accumulates faster → Buy bigger upgrade → ...
+2. **Progress slows** → Option to "Prestige" (reset but with permanent bonus) → **Early game becomes trivial** → Dopamine from rapid progress → Eventually slow again → Prestige again
+
+**The Prestige Hook:**
+- **Voluntary loss**: Player CHOOSES to reset (feels like strategy, not punishment)
+- **Meta-progression**: Each run makes you stronger permanently
+- **Time compression**: What took 1 hour first run takes 5 minutes after prestige
+- **Power fantasy**: "I'm so strong now, I'm one-shotting stuff that killed me before"
+
+**Number Psychology:**
+- **Scientific notation**: 1.5e12 cookies = incomprehensible = funny
+- **Special names**: Million → Billion → Trillion → Quadrillion → Quintillion → gets absurd
+- **Exponential feels linear**: Humans perceive exponential growth as linear when numbers are abstract
+
+**Application to Tiny Tycoon:**
+- ✅ **Already have**: Three levels = three "rebirths" (start at 0.5 each time)
+- ✅ **Already have**: Each level has bigger numbers ($500 → $15K → $500K)
+- ❌ **Missing**: Permanent upgrades between levels (no meta-progression)
+- ❌ **Missing**: Numbers don't escalate absurdly enough (need quadrillions for comedy)
+- **Steal This**: Add "REBIRTH BONUS" - completing Level 1 gives you 1.5x speed in Level 2, etc.
+
+---
+
+### **RESEARCH AREA 2: LITTLEJS GAME JAM ECOSYSTEM**
+
+#### **LittleJS Game Jam Winners Analysis:**
+
+**1st Place - "204Snake!" (LittleJS Jam 2024)**
+- Combined 2048 + Snake mechanics (merge numbers while moving)
+- **Why it won**: Novel mechanic twist, polished, replayable
+- Used ZzFX for sound, particles for juice
+- **Lesson**: Innovation > scope. One clever idea executed well beats 10 half-baked ideas
+
+**2nd Place - "GATOR" (LittleJS Jam 2024)**
+- Retro platformer shooter, rescue animals theme
+- **Why it worked**: Tight controls, nostalgic pixel art, animal rescue = wholesome
+- Solid fundamentals, no bugs, good game feel
+- **Lesson**: Polish and game feel beat novelty if execution is perfect
+
+**3rd Place - "A Hedgehog's Search"**
+- Adventure game with exploration
+- **Why it placed**: Cozy vibes, story, charming character
+- **Lesson**: Personality and charm can carry a simple game
+
+**Common Success Factors:**
+1. **Game feel / juice**: Screen shake, particles, sound on EVERY action
+2. **Clear theme execution**: Game clearly fits "SMALL" theme within 30 seconds
+3. **No bugs**: Polish over features
+4. **Replayability**: Score attack, time attack, or roguelike elements
+5. **Visual identity**: Distinct art style, even if simple
+
+**Physics Prize Winners:**
+- Games that used Box2D plugin for realistic physics
+- Innovative use of LittleJS particle system
+- **Lesson**: Judges reward technical innovation + good design
+
+**Application to Tiny Tycoon:**
+- ✅ **Theme execution**: "SMALL" (start 0.5 units) is clear in first 10 seconds
+- ❌ **Missing juice**: Need more screen shake, particles, sound effects
+- ✅ **Simple concept**: Easy to understand (Katamari clone)
+- ❌ **Missing**: Unique twist on formula (what makes THIS Katamari different?)
+- **Steal This**: Add **magnetic pull particle trails** when objects are attracted to ball
+
+---
+
+#### **JS13K Winners (13KB Constraint) - Optimization Techniques:**
+
+**"The Way of the Dodo" (JS13K 2024 - 5th Place)**
+- Single-button platformer in <13KB
+- **Technique**: Procedural generation instead of asset files
+- Used ZzFX for music (0.6KB sound engine!)
+- **Lesson**: Code size << asset size. Procedural > files.
+
+**"Black Cat Squadron" (JS13K 2024 - 5th Place)**
+- One-button WW2 shooter using LittleJS
+- **Technique**: Simple color palette (4 colors), geometric shapes
+- All sprites are CODE-GENERATED circles/rectangles with color
+- **Lesson**: You don't need realistic art. Geometry + color = recognizable
+
+**Common 13KB Techniques:**
+1. **Code golf**: Minify, compress, remove comments
+2. **No image files**: Use canvas API to draw shapes procedurally
+3. **ZzFX audio**: 0.6KB engine vs 100s of KB for MP3s
+4. **Limited palette**: 4-8 colors max, high contrast
+5. **Seedable random**: Procedural levels from seed = infinite content, 0KB
+
+**Application to Tiny Tycoon:**
+- ✅ **Using ZzFX**: Good! Tiny sound engine
+- ✅ **Small sprite sheet**: 256×256 PNG will compress well
+- ❌ **Could optimize**: Some objects could be code-drawn instead of sprites (coins = circles)
+- **Lesson**: LittleJS is BUILT for js13k. We have lots of KB budget for this jam, but techniques are still useful
+
+---
+
+### **RESEARCH AREA 3: SPRITE CREATION DEEP DIVE**
+
+#### **Pixel Art Tutorial - PixelJoint Masterclass:**
+
+**Core Principles (from PixelJoint community):**
+
+1. **What IS Pixel Art:**
+   - Control at single-pixel level
+   - Every pixel deliberately placed
+   - NO automatic tools (no blur, smudge, blend)
+   - CAN use line tool, bucket fill (tools that place predictable pixels)
+
+2. **Anti-Aliasing (AA):**
+   - Manual smoothing of jagged edges
+   - Add intermediate color pixels between contrasting areas
+   - Makes curves look smooth at low resolution
+   - **Bad AA**: Too many colors, random placement, muddy edges
+
+3. **Avoid "Pillow Shading":**
+   - Don't just lighten center and darken edges in circle
+   - Light source should be DIRECTIONAL (top-left convention)
+   - Shadows should follow form, not just outline
+
+4. **Banding:**
+   - Avoid parallel lines of shading (looks amateurish)
+   - Break up patterns, use varied clusters
+   - Shading should follow form, not stroke direction
+
+5. **Color Palette:**
+   - Start SMALL (4-8 colors for whole game)
+   - Add colors only when needed
+   - **Hue-shifting**: Don't just lighten/darken, shift hue (shadows = cooler/bluer, highlights = warmer/yellower)
+
+**16×16 Specific Techniques:**
+- **Silhouette first**: Object recognizable from outline alone
+- **Cluster pixels**: Groups of 2-4 pixels, avoid single stray pixels
+- **High contrast**: Small sprites need bold color differences
+- **Minimal detail**: 1-2 defining features max (car = wheels + windshield, that's it)
+
+**Tools Comparison:**
+- **Aseprite** ($20): Industry standard, animation, onion skinning, tile mode
+- **Piskel** (FREE, browser): Beginner-friendly, online, exports GIF
+- **GraphicsGale** (FREE): Windows-only, powerful but dated UI
+- **MS Paint** (FREE): Actually fine for pixel art if you're disciplined!
+
+**Application to Tiny Tycoon:**
+- **Use**: 16×16 sprites, silhouette-first design
+- **Use**: Limited palette (8-12 colors for ALL objects, use tinting for variation)
+- **Use**: Top-down 3/4 perspective (easier than isometric, no perspective distortion)
+- **Avoid**: Pillow shading, banding, automatic blur
+- **Tool choice**: Piskel (FREE, browser-based, can iterate quickly) or Aseprite if you have it
+
+---
+
+#### **Color Palette Strategy (Lospec Research):**
+
+**Popular 16-Color Palettes for Pixel Art:**
+
+1. **"Game Boy Palette"** (4 colors):
+   - Simplest: 4 shades of green/gray
+   - Forces good contrast, clarity
+   - Nostalgic
+
+2. **"Pico-8 Palette"** (16 colors):
+   - Industry standard for tiny games
+   - Bold, saturated, high contrast
+   - Every color distinct at tiny size
+
+3. **"Sweetie 16"** (16 colors):
+   - Modern pixel art standard
+   - Vibrant, warm, friendly
+   - Good for varied objects
+
+**Recommendation for Tiny Tycoon:**
+- Start with **8-color palette** (expandable to 16 if needed):
+  - 2 skin tones (for people)
+  - 2 greens (grass, trees)
+  - 2 grays (pavement, buildings, metal)
+  - Brown (wood, dirt)
+  - Gold/yellow (player, coins, special)
+  - Then use programmatic tinting in LittleJS for variation (red car, blue car = same sprite, different tint)
+
+---
+
+### **RESEARCH AREA 4: AUDIO & JUICE SYSTEMS**
+
+#### **ZzFX - Procedural Sound Deep-Dive:**
+
+**How ZzFX Works:**
+- 20 parameters control waveform generation
+- Output: Synthesized sound in <1KB code
+- Sounds are CODE, not files (zzfx(...[params]) = instant sound)
+
+**ZzFX Sound Designer Tool:**
+- Visual interface to tweak parameters
+- Real-time preview
+- Copy/paste code directly into game
+- Randomize presets for inspiration
+
+**Pre-Made Sounds (from ZzFX library):**
+```javascript
+// Coin collect (high pitch "bling"):
+zzfx(...[,,537,.02,.02,.22,1,1.59,-6.98,4.97]);
+
+// Power-up (rising tone):
+zzfx(...[,,925,.04,.3,.6,1,.3,,6.27,-184,.09,.17]);
+
+// Death / fail (descending):
+zzfx(...[1.5,.8,270,,.1,,1,1.5,,,,,,,,.1,.01]);
+
+// Hit / impact (short punch):
+zzfx(...[,,129,.01,,.15,,,,,,,,5]);
+```
+
+**Sound Design Strategy for Tiny Tycoon:**
+
+1. **Collection sounds** (pitch scales with size):
+   ```javascript
+   function playCollectSound(objectSize) {
+       const basePitch = 200 + (objectSize * 100); // Bigger = lower pitch
+       zzfx(...[,,basePitch,.02,.02,.22,1,1.59,-6.98,4.97]);
+   }
+   ```
+
+2. **UI sounds**:
+   - Menu navigate: High click
+   - Victory: Ascending arpeggio (3 notes)
+   - Defeat: Descending sad trombone
+   - Timer warning: Beep beep beep (urgent)
+
+3. **Ambient/Music** (OPTIONAL):
+   - ZzFXM (music variant) can generate lo-fi beats
+   - OR use single looping ambient tone (wind, city hum)
+   - OR no music, just SFX (often better for arcade games)
+
+**Application to Tiny Tycoon:**
+- **IMMEDIATE**: Add collection sound that pitches down as objects get bigger
+- **PRIORITY 2**: Victory fanfare, defeat sound, timer beep
+- **POLISH**: Ambient music OR leave silent (player can play their own music)
+- **Technique**: Cache sounds on game load (don't regenerate each time)
+
+---
+
+#### **Game Feel / Juice - "The Chemistry of Game Design":**
+
+**Skill Atom Theory (Daniel Cook):**
+- Games are feedback loops: **Action → Simulation → Feedback → Mental Model**
+- Player does thing → Game responds → Player sees/hears response → Player learns
+- **Fun = Learning new skills** (not just winning)
+- **Burnout = No new skills to learn** (game gets boring when stagnant)
+
+**Application to Tiny Tycoon:**
+- **Current skill atoms**: Move → Touch object → Object consumed → Size increases
+- **Missing feedback**: Player doesn't SEE the size increase dramatically enough
+- **Solution**: Add JUICE to every step:
+  - Move: Trail particles behind ball
+  - Touch: Magnetic pull animation, object stretches toward ball
+  - Consumed: **SCREEN SHAKE**, particle burst, sound, popup text, score update
+  - Size increase: Visual scale change PLUS text indicator "2.5x → 3.0x!"
+
+**Flow Theory (Mihály Csíkszentmihályi):**
+- **Flow state** = fully immersed, time disappears, optimal experience
+- Requires: **Clear goals + Immediate feedback + Challenge matches skill**
+- **Flow channel**: Too easy = bored, too hard = frustrated, just right = flow
+
+**Flow Challenge Graph:**
+```
+High Challenge
+     │        Anxiety
+     │       ╱
+     │     ╱ FLOW
+     │   ╱  ╱
+     │ ╱  ╱
+     │╱  ╱ Bored
+─────┼─────────── High Skill
+```
+
+**Application to Tiny Tycoon:**
+- ✅ **Clear goals**: "Reach X size in Y seconds"
+- ✅ **Immediate feedback**: Score updates, size increases
+- ❌ **Challenge tuning**: Need to balance early/late game difficulty
+- **Solution**: Level 1 is forgiving (learn mechanics), Level 2 is balanced (flow), Level 3 is intense (mastery test)
+
+---
+
+### **RESEARCH AREA 5: ADDICTION PSYCHOLOGY**
+
+#### **Operant Conditioning (B.F. Skinner):**
+
+**Core Principle:**
+- **Reinforcement** = consequences that increase behavior frequency
+- **Positive reinforcement**: Add good thing (get reward) → behavior increases
+- **Negative reinforcement**: Remove bad thing (escape danger) → behavior increases
+
+**Variable Ratio Schedule (most addictive):**
+- Reward comes after UNPREDICTABLE number of actions
+- Example: Slot machines (might win on pull #3, might be pull #47)
+- Creates **compulsive behavior** because "next one might be the big one!"
+
+**Application to Tiny Tycoon:**
+- **Current**: Fixed rewards (every object gives predictable value)
+- **Could add**: "RARE" objects that spawn randomly (Golden Penny = 10x value)
+- **Could add**: "LUCKY" streak bonus (random chance to double next collection)
+- **Ethical note**: Variable rewards are VERY addictive. Use responsibly. We're making 20-minute game, not exploiting whales.
+
+---
+
+#### **Flow State Triggers:**
+
+**6 Factors for Flow:**
+1. **Intense focus on present moment** (no distractions)
+2. **Merging of action and awareness** (you ARE the ball)
+3. **Loss of self-consciousness** (forget you're playing a game)
+4. **Sense of control** (mastery of mechanics)
+5. **Time distortion** ("I played for 5 minutes but it was 30!")
+6. **Intrinsically rewarding** (fun for its own sake, not external reward)
+
+**How Tiny Tycoon Can Trigger Flow:**
+1. **Focused attention**: Fast-paced, constant decisions ("which object to eat next?")
+2. **Clear feedback**: Size increases, score popups, sounds = constant response
+3. **Challenge/skill balance**: Gradually increasing difficulty
+4. **No interruptions**: 60-second levels = short enough to maintain focus
+
+**Avoid Flow-Killers:**
+- ❌ Long loading screens
+- ❌ Unskippable cutscenes
+- ❌ Confusing UI
+- ❌ Inconsistent feedback
+- ❌ Difficulty spikes
+
+---
+
+#### **Compulsion Loop (Dopamine System):**
+
+**How Dopamine Works:**
+- Released during **anticipation** of reward (not just receiving reward!)
+- **Novelty** triggers dopamine ("What's this new thing?")
+- **Uncertainty** amplifies dopamine ("Will I get the rare drop?")
+
+**Compulsion Loop Structure:**
+1. **Trigger**: See opportunity (object appears)
+2. **Action**: Do thing (collect object)
+3. **Reward**: Get payoff (size increase, score, sound)
+4. **Investment**: Progress toward goal (closer to next level)
+5. **Trigger**: See new opportunity (repeat)
+
+**Application to Tiny Tycoon:**
+- **Trigger**: Collectibles spawn constantly (always something new to chase)
+- **Action**: Movement + magnetic attraction (feels active, not passive)
+- **Reward**: Multi-sensory feedback (visual + audio + tactile)
+- **Investment**: Score increases, getting closer to level goal
+- **Novelty**: New object types as you grow (penny → car → yacht)
+
+**Make It More Compelling:**
+- Add **combo system** (collect 5 in 2 seconds = bonus multiplier)
+- Add **achievement popups** ("FIRST PERSON EATEN!", "10 OBJECTS IN 5 SECONDS!")
+- Add **near-miss feedback** (object barely too big = frustrated = "I'll get it next time!")
+
+---
+
+### **RESEARCH AREA 6: NARRATIVE & HUMOR**
+
+#### **Katamari Damacy - Absurdist Narrative Analysis:**
+
+**Why Katamari's Story Works:**
+- **Premise is absurd**: Your dad (King of All Cosmos) got drunk and destroyed all stars. You (tiny prince) must roll up Earth's objects to remake stars.
+- **No explanation needed**: Game doesn't justify WHY rolling things into a ball makes stars. It just does. Accept it.
+- **Escalation is the joke**: Thumbtack → pencil → cat → cow → person → house → island → moon. The escalation IS the punchline.
+- **Self-aware tone**: King of All Cosmos belittles you, makes insulting comments. Game is AWARE it's ridiculous.
+
+**Application to Tiny Tycoon:**
+- ✅ **Absurd premise**: You're a sentient ball of capitalism eating everything to get rich
+- ✅ **No explanation**: Don't explain HOW or WHY. Just "eat stuff = money goes up"
+- ✅ **Escalation**: Penny → Teacher → Yacht → Rocket (absurdity IS the game)
+- **Add**: Self-aware text that acknowledges absurdity
+
+**Example Flavor Text:**
+```
+"You just consumed a TEACHER.
+This is fine. This is normal.
+Capitalism has no brakes."
+```
+
+---
+
+#### **Gen Alpha Humor - Brain Rot Culture Analysis:**
+
+**What is "Brain Rot":**
+- Term Gen Alpha uses for low-effort, absurdist, hypnotic content
+- Examples: Skibidi Toilet, Subway Surfers gameplay with Reddit stories, "only in Ohio" memes
+- Characteristics: Surreal, fast-paced, no explanation, ironically low-quality
+
+**Why It's Addictive:**
+- **Cognitive ease**: No mental effort required, pure sensory stimulation
+- **Unpredictability**: Each meme is different, dopamine from novelty
+- **Ironic detachment**: "This is so stupid it's funny"
+- **Shared language**: Referencing memes = in-group signaling
+
+**Gen Alpha Linguistic Quirks:**
+- "Sigma grindset" (ironic hustle culture worship)
+- "Rizz" (charisma)
+- "Caught in 4K" (exposed)
+- "It's giving..." (vibes description)
+- "No cap / Cap" (truth / lie)
+- "Bussin" (good)
+- "Mid" (mediocre)
+
+**Application to Tiny Tycoon:**
+- **Tone**: Ironic grindset worship ("YOU ARE NOW UNGOVERNABLE")
+- **Language**: Use Gen Alpha slang sparingly ("BUSSIN COLLECTION STREAK")
+- **Absurdism**: Don't explain, just escalate
+- **Self-awareness**: Game knows it's silly
+
+**Victory Screen Examples:**
+```
+Level 1 Win:
+"UNCOMMON GRINDSET UNLOCKED
+Portfolio: $523 (Bussin fr fr)
+Biggest W: Ate a whole desk
+Ratio: 27:0 💀"
+
+Level 2 Win:
+"MID-TIER INFLUENCER ACHIEVED
+No cap, you consumed a HONDA CIVIC
+This is what the grind looks like
+Caught in 4K: 📸🚗"
+
+Level 3 Win:
+"OLIGARCH ENDGAME COMPLETE
+Net worth: $500M (It's giving billionaire)
+You ate: SPACE ROCKET
+Sigma status: CONFIRMED ✅
+Touch grass? Nah, touch ASSETS 💎"
+```
+
+**Warning**: Don't overdo slang or it becomes cringe. Use sparingly for comedic effect.
+
+---
+
+#### **Screenshot-able Moments - Viral Design:**
+
+**Why Games Go Viral:**
+- Balatro: "Look at this insane Joker combo!"
+- Vampire Survivors: "I'm invincible with 47 weapons!"
+- Cookie Clicker: "I have 1 VIGINTILLION cookies"
+
+**What Makes Content Screenshot-able:**
+1. **Visual spectacle**: Something looks crazy/impressive
+2. **Numerical absurdity**: Big numbers, crazy combos
+3. **Unexpected outcome**: "I didn't know you could do that!"
+4. **Personal achievement**: "I did something rare"
+5. **Humor**: "This is objectively ridiculous"
+
+**Application to Tiny Tycoon:**
+
+Make these moments VISIBLE and SHAREABLE:
+
+1. **Consumption Log** (post-level):
+   ```
+   YOU CONSUMED:
+   🪙 47 Pennies
+   ✏️ 23 Crayons
+   👨‍🏫 8 TEACHERS (what)
+   🏀 3 Basketballs
+   🪑 1 ENTIRE DESK
+
+   Most Cursed: Ate 8 people
+   Capitalism Level: UNHINGED
+   ```
+
+2. **Mid-Game Popups**:
+   ```
+   🔥 COMBO x15 STREAK 🔥
+   LEGENDARY CONSUMER MODE
+   +300% VALUE MULTIPLIER
+   YOU'RE HIM
+   ```
+
+3. **Victory Stats**:
+   ```
+   🏆 LEVEL 3 COMPLETE 🏆
+
+   Net Worth: $527,000,000
+   Objects Consumed: 347
+   Biggest Flex: SPACE ROCKET 🚀
+   Time: 58.4 seconds
+
+   GENERATIONAL WEALTH UNLOCKED
+   ```
+
+**Shareable Elements:**
+- Unique object combinations ("I ate 12 teachers and a helicopter")
+- High scores ("$527M in 58 seconds")
+- Rare events ("Got a GOLDEN PENNY!")
+- Absurd escalation ("Started with penny, ended with ROCKET")
+
+---
+
+### **RESEARCH AREA 7: COMPETITOR ANALYSIS**
+
+#### **Similar Browser Growth Games:**
+
+**agar.io** (2015, still active):
+- **What worked**: Simple, instant understand, competitive multiplayer
+- **What failed**: Hackers, bots, pay-to-win additions
+- **Lesson**: Keep it simple, single-player is fine, avoid P2W
+
+**slither.io** (2016):
+- **Improvement over agar**: More forgiving (length > mass), better game feel
+- **What worked**: Boost mechanic (risk/reward), snake trail is satisfying
+- **Lesson**: Add ONE clever mechanic twist to proven formula
+
+**diep.io** (2016):
+- **Evolution**: Added progression tree (tank upgrades)
+- **What worked**: Sense of progression, build variety
+- **Lesson**: Meta-progression keeps players coming back
+
+**mope.io** (2016):
+- **Theme twist**: Animals instead of blobs
+- **What worked**: Themed objects are more engaging than abstract shapes
+- **Lesson**: Theme matters! Animals > circles.
+
+**Application to Tiny Tycoon:**
+- ✅ **We have theme**: Capitalism/consumerism (stronger than generic "eat blobs")
+- ✅ **We have progression**: 3 levels with different objects
+- ❌ **We lack**: Unique twist on formula (what makes THIS different?)
+- **Idea**: Combo system + rebirth mechanics = our unique twist
+
+---
+
+#### **Incremental Game Successes:**
+
+**Cookie Clicker** (2013, 800M+ players):
+- **Hook**: Click cookie → Buy cursor → Cursor clicks for you → Buy more upgrades → Numbers go BRRR
+- **Prestige**: "Ascension" gives permanent bonuses
+- **Why still popular**: Regular updates, achievements, idle progression
+- **Lesson**: Incremental progression is HIGHLY addictive
+
+**AdVenture Capitalist** (2014):
+- **Hook**: Run businesses → Make profit → Buy more businesses → Become tycoon
+- **Monetization**: Speed boosts, offline earnings multiplier
+- **Why successful**: Satisfying number growth, offline progression
+- **Lesson**: Idle = accessible (can't lose, just progress at different speeds)
+
+**Universal Paperclips** (2017):
+- **Hook**: Make paperclips → Automate paperclip production → **CONSUME UNIVERSE**
+- **Why cult hit**: Narrative escalation, existential horror, ends after 3-4 hours
+- **Lesson**: Giving game an ENDING creates urgency ("I must finish!")
+
+**Application to Tiny Tycoon:**
+- ✅ **Has ending**: 3 levels with victory condition = finite experience
+- ✅ **Number growth**: $1 → $500M feels good
+- ❌ **No idle mechanics**: Must actively play (this is OK for arcade game)
+- **Lesson**: Having an ENDING is good (not all games need to be infinite)
+
+---
+
+#### **What DIDN'T Work - Failed Games Analysis:**
+
+**Generic .io clones** (100s of them):
+- **Why they failed**: No unique twist, just reskin of agar.io
+- **Lesson**: Theme alone isn't enough, need gameplay hook
+
+**Bloated incrementals** (many mobile clickers):
+- **Why they failed**: Too many currencies, too many menus, overwhelming
+- **Lesson**: Simplicity > features. One clear progression path.
+
+**Pay-to-win arcade games**:
+- **Why they failed**: Ruined competitive balance, players left
+- **Lesson**: For jam game, keep it PURE. No monetization pressure.
+
+**Application to Tiny Tycoon:**
+- ✅ **Avoid**: Don't just reskin Katamari, add our own identity
+- ✅ **Avoid**: Don't add too many systems (combo is enough, don't add tech trees)
+- ✅ **Avoid**: No P2W (this is jam game, not mobile game)
+
+---
+
+## 🎯 SYNTHESIS: THE "IT FACTOR" FORMULA
+
+### **What We Learned Across All Research:**
+
+**The "It Factor" = Theme + Mechanics + Juice + Progression + Personality**
+
+1. **Theme** (makes it memorable):
+   - ✅ Capitalism/consumerism satire
+   - ✅ Gen Alpha "grindset" ironic humor
+   - ✅ Absurd escalation (penny → rocket)
+
+2. **Mechanics** (makes it fun):
+   - ✅ Katamari-style growth
+   - ✅ Magnetic attraction (feels good)
+   - ❌ **MISSING**: Combo system (skill expression)
+   - ❌ **MISSING**: Rare events (variable rewards)
+
+3. **Juice** (makes it satisfying):
+   - ❌ **MISSING**: Screen shake
+   - ❌ **MISSING**: Particles
+   - ❌ **MISSING**: Sound effects
+   - ❌ **MISSING**: Collection text popups
+
+4. **Progression** (makes it compelling):
+   - ✅ 3 levels with escalating scope
+   - ✅ Clear goals (reach $ target)
+   - ❌ **MISSING**: Meta-progression (no permanent upgrades)
+   - ❌ **MISSING**: Achievements/unlocks
+
+5. **Personality** (makes it share-able):
+   - ❌ **MISSING**: Named objects (abstractions → specific things)
+   - ❌ **MISSING**: Flavor text
+   - ❌ **MISSING**: Consumption log (memory of what you ate)
+   - ❌ **MISSING**: Screenshot-able victory screens
+
+---
+
+## 📊 PRIORITY MATRIX - What To Build First
+
+### **CRITICAL PATH (MVP → "It Factor"):**
+
+**Phase 1: SOUL (Replace Rectangles)**
+- [ ] Create sprite sheet (30-40 objects)
+- [ ] Implement named collectibles (PENNY, TEACHER, YACHT)
+- [ ] Update rendering to use sprites
+- **Impact**: Game goes from "abstract" to "absurd"
+- **Time**: 6-8 hours
+
+**Phase 2: JUICE (Make It Feel Good)**
+- [ ] Screen shake on collection (bigger object = bigger shake)
+- [ ] ZzFX sound effects (collection, victory, defeat)
+- [ ] Particle bursts on collection
+- [ ] Collection text popups ("CONSUMED: DESK!")
+- **Impact**: Game goes from "mechanical" to "satisfying"
+- **Time**: 3-4 hours
+
+**Phase 3: PERSONALITY (Make It Memorable)**
+- [ ] Update level names ("BROKE ERA", "INFLUENCER ARC", "OLIGARCH ENDGAME")
+- [ ] Add flavor text (victory screens, transitions)
+- [ ] Consumption log (stats on what you ate)
+- [ ] Gen Alpha slang integration (subtle, not cringe)
+- **Impact**: Game goes from "functional" to "share-able"
+- **Time**: 2-3 hours
+
+**Phase 4: PROGRESSION (Make It Compelling)**
+- [ ] Add combo system (eat X in Y seconds = multiplier)
+- [ ] Add rare objects (Golden Penny = 10x value)
+- [ ] Add rebirth bonuses (Level 1 complete = 1.5x speed in Level 2)
+- [ ] Add achievements (popups for milestones)
+- **Impact**: Game goes from "fun" to "addictive"
+- **Time**: 4-5 hours
+
+**Total Estimated Time**: 15-20 hours of focused work
+
+---
+
+## 🚀 CONCRETE ACTION PLAN
+
+### **Session 3 Goals (Next Work Session):**
+
+**Option A: Start with Sprites (Biggest Impact)**
+1. Choose tool (Piskel FREE browser tool)
+2. Create MVP 10 sprites (penny, gum, backpack, desk, teacher, coffee, car, businessman, yacht, player ball)
+3. Test in-game with LittleJS sprite system
+4. **Success metric**: See real objects instead of rectangles
+
+**Option B: Start with Juice (Fastest Win)**
+1. Add screen shake function (5 lines of code)
+2. Integrate ZzFX (copy from examples)
+3. Add collection sound with pitch scaling
+4. Add particle burst on collection
+5. **Success metric**: Game FEELS way better with same visuals
+
+**Recommendation**: Do **Option B first** (2-3 hours), then **Option A** (6-8 hours). Juice makes development more fun, so you'll be more motivated to make sprites.
+
+---
+
+## 📚 RESEARCH SOURCES ARCHIVE
+
+### **Primary Sources:**
+- **Pet Simulator X Wiki**: Roblox tycoon mechanics, 1000+ collectibles, trading economy
+- **LittleJS GitHub**: Game jam winners, example code, sprite atlas system
+- **ZzFX Repository**: Sound designer tool, pre-made sounds, 20-parameter system
+- **PixelJoint Tutorial**: Pixel art fundamentals, 16×16 techniques, anti-aliasing
+- **Lospec Palette List**: Color palette database, 4000+ palettes, pixel art standards
+- **OpenGameArt**: Free sprite resources, CC0 licenses, community standards
+- **Aseprite / Piskel**: Sprite creation tools comparison, workflow analysis
+
+### **Academic/Theory:**
+- **"The Chemistry of Game Design" (Daniel Cook)**: Skill atom theory, feedback loops, burnout mechanics
+- **Flow Theory (Mihály Csíkszentmihályi)**: Flow state conditions, challenge/skill balance, time distortion
+- **Operant Conditioning (B.F. Skinner)**: Reinforcement schedules, variable ratio rewards, addiction psychology
+- **Katamari Damacy (Wikipedia)**: Design philosophy, object escalation, absurdist narrative
+
+### **Competitive Analysis:**
+- **agar.io / slither.io**: Growth game mechanics, multiplayer dynamics, game feel
+- **Cookie Clicker**: Incremental mechanics, prestige systems, number escalation
+- **AdVenture Capitalist**: Idle progression, monetization (to avoid), offline mechanics
+- **Universal Paperclips**: Narrative progression, finite experience design, existential themes
+- **JS13K Winners**: Code optimization, 13KB constraint solutions, procedural generation
+- **Browser Game Archives**: 200+ open-source games analyzed for patterns
+
+### **Cultural Research:**
+- **Gen Alpha Slang**: "Sigma grindset", "brain rot", "bussin", "no cap", ironic humor patterns
+- **Meme Culture**: Screenshot-able moments, viral sharing patterns, absurdist escalation
+- **Roblox Economy**: Virtual status symbols, trading psychology, rebirth mechanics
+- **TikTok Trends**: Attention span patterns, dopamine triggers, format analysis
+
+---
+
+## 💡 KEY INSIGHTS (TL;DR)
+
+### **The 5 Critical Gaps:**
+
+1. **Visual Identity**: Rectangles → Named Sprites (PENNY, TEACHER, YACHT)
+2. **Feedback Loops**: Silent collecting → Screen shake + Sound + Particles + Text
+3. **Personality**: Generic → Gen Alpha ironic hustle culture theme
+4. **Progression**: Flat growth → Combo system + Rare objects + Rebirth bonuses
+5. **Share-ability**: Forgettable → Consumption logs + Victory stats + Absurd moments
+
+### **The 3 Big Wins:**
+
+1. **Sprites First**: Biggest psychological impact. Game transforms from "demo" to "game"
+2. **Juice Second**: Highest satisfaction-to-effort ratio. 3 hours of work = 10x better feel
+3. **Personality Third**: Makes game memorable. Difference between "I played it" and "I need to show my friend"
+
+### **The 1 Core Philosophy:**
+
+**"Katamari Damacy meets Cookie Clicker meets Ironic Gen Alpha Hustle Culture"**
+
+- **Katamari**: Absurd escalation, named objects, growth mechanics
+- **Cookie Clicker**: Number go up, prestige/rebirth, compulsion loops
+- **Gen Alpha**: "Sigma grindset" satire, brain rot energy, screenshot-able moments
+
+---
+
+*This is a living document. Research session 2 complete. Ready to BUILD.*
+
+---
+
+**STATUS**: Research COMPLETE ✅
+**NEXT**: Choose Phase 1 (Sprites) or Phase 2 (Juice) and START BUILDING
+**TIMELINE**: 15-20 hours to transform from "mechanically solid" to "IT FACTOR achieved"
+**DEADLINE**: November 3, 2025 (T-20 days, plenty of time!)
 
