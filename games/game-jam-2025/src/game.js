@@ -73,6 +73,90 @@ const ZZFX_SOUNDS = {
     timerWarning: [,,400,.01,,.05,,1.5,,,,,,,,.1]
 };
 
+// ============================================================================
+// FEATURE 005: PARTICLE EFFECTS SYSTEM (FR-005)
+// ============================================================================
+
+// Particle color definitions (FR-005-003, FR-005-008-CLARIFIED)
+const PARTICLE_COLORS = {
+    collection: {
+        startA: new Color(1, 1, 0, 1),        // Bright yellow
+        startB: new Color(1, 1, 0, 1),        // Same (no variation)
+        endA: new Color(1, 0.5, 0, 0),        // Orange fade to transparent
+        endB: new Color(1, 0.5, 0, 0)         // Same
+    },
+    tierUp: {
+        startA: new Color(1, 0.9, 0.2, 1),    // Golden
+        startB: new Color(1, 0.7, 0.1, 1),    // Variation (±30% hue)
+        endA: new Color(1, 0.5, 0, 0),        // Orange fade
+        endB: new Color(1, 0.3, 0, 0)         // Darker orange fade
+    },
+    magneticTrail: {
+        startA: new Color(1, 1, 0.5, 0.8),    // Pale yellow, semi-transparent
+        startB: new Color(1, 1, 0.5, 0.8),    // Same
+        endA: new Color(1, 1, 0.5, 0),        // Fade to transparent
+        endB: new Color(1, 1, 0.5, 0)         // Same
+    }
+};
+
+// Particle configuration (consolidates all FRs)
+const PARTICLE_CONFIG = {
+    collection: {
+        emitTime: 0.01,           // Instant burst
+        emitConeAngle: PI,        // 180° spread (FR-005-006)
+        particleTime: 0.5,        // 0.5s lifespan (FR-005-004)
+        sizeStart: 0.3,           // Starting particle size
+        sizeEnd: 0.1,             // Ending particle size (shrinks)
+        speed: 3,                 // Emission speed (outward burst)
+        angleVelocity: 0,         // No rotation
+        damping: 0.92,            // Velocity decay
+        angleDamping: 1,          // No angular decay
+        gravityScale: 0,          // No gravity (top-down view)
+        particleConeAngle: PI,    // Individual particle spread
+        fadeRate: 0.1             // Alpha fade rate
+    },
+    tierUp: {
+        emitTime: 0.01,           // Instant burst
+        emitConeAngle: PI * 2,    // 360° spread (full explosion)
+        particleTime: 1.0,        // 1.0s lifespan (FR-005-009)
+        sizeStart: 0.5,           // Larger particles (more impressive)
+        sizeEnd: 0.2,             // Ending size
+        speed: 5,                 // Faster emission (dramatic)
+        angleVelocity: 0,         // No rotation
+        damping: 0.90,            // Slower decay (linger longer)
+        angleDamping: 1,          // No angular decay
+        gravityScale: 0,          // No gravity
+        particleConeAngle: PI * 2,// Full spread
+        fadeRate: 0.05            // Slower fade (linger longer)
+    },
+    magneticTrail: {
+        emitTime: 0.01,           // Per-frame emission
+        emitConeAngle: 0.5,       // Narrow cone (trail behind movement)
+        particleTime: 0.3,        // Short lifespan (subtle trail)
+        sizeStart: 0.2,           // Small particles
+        sizeEnd: 0.05,            // Tiny ending size
+        speed: 0.5,               // Slow emission (trail effect)
+        angleVelocity: 0,         // No rotation
+        damping: 0.95,            // High damping (particles linger)
+        angleDamping: 1,          // No angular decay
+        gravityScale: 0,          // No gravity
+        particleConeAngle: 0.5,   // Narrow spread
+        fadeRate: 0.2             // Fast fade (subtle effect)
+    }
+};
+
+// Particle budget thresholds (FR-005-013-CLARIFIED)
+const PARTICLE_BUDGET = {
+    max: 500,                     // Maximum particles on screen
+    reduceThreshold: 400,         // 80% of max - start reducing
+    restoreThreshold: 250,        // 50% of max - restore full quality
+    decayRate: 0.98               // Particle count estimation decay per frame
+};
+
+// Particle budget and adaptive LOD (FR-005-012, FR-005-013)
+let activeParticleCount = 0;  // Estimated active particles (decays over time)
+let emissionMultiplier = 1.0; // LOD multiplier (1.0 = full quality, 0.5 = reduced)
+
 /**
  * SoundManager - Manages all game audio via ZzFX
  * FR-004-001: Pre-caches all sounds for instant playback
@@ -239,6 +323,9 @@ function gameInit() {
 }
 
 function gameUpdate() {
+    // Feature 005: Particle budget management (FR-005-013)
+    updateParticleBudget();
+
     // Camera follow player with lerp (FR-013, research.md R3)
     if (player) {
         cameraPos = cameraPos.lerp(player.pos, 0.1);
@@ -492,6 +579,128 @@ function gameRenderPost() {
 }
 
 // ============================================================================
+// FEATURE 005: PARTICLE EFFECTS UTILITY FUNCTIONS
+// ============================================================================
+
+/**
+ * Spawn magnetic trail particles (FR-005-010)
+ * @param {vec2} pos - Position of collectible being pulled
+ * @param {number} count - Number of trail particles (1-2)
+ */
+function spawnMagneticTrailParticles(pos, count) {
+    // Apply LOD multiplier
+    const particleCount = Math.floor(count * emissionMultiplier);
+    if (particleCount < 1) return; // Skip if LOD too aggressive
+
+    const config = PARTICLE_CONFIG.magneticTrail;
+    const colors = PARTICLE_COLORS.magneticTrail;
+
+    // Create subtle trail particles (FR-005-010-CLARIFIED)
+    new ParticleEmitter(
+        pos,                       // Position at collectible
+        PI,                        // Angle (down = upward in top-down)
+        0.2,                       // Small emit size (subtle trail)
+        config.emitTime,           // 0.01s per-frame emission
+        particleCount,             // 1-2 particles per frame
+        config.emitConeAngle,      // 0.5 radians (narrow cone)
+        undefined,                 // Colored circles (no sprite)
+        colors.startA, colors.startB, colors.endA, colors.endB,
+        config.particleTime,       // 0.3s lifespan (short, subtle)
+        config.sizeStart, config.sizeEnd, config.speed,
+        config.angleVelocity, config.damping, config.angleDamping,
+        config.gravityScale, config.particleConeAngle, config.fadeRate
+    );
+
+    // Track for budget management
+    activeParticleCount += particleCount;
+}
+
+/**
+ * Spawn tier-up particle explosion (FR-005-007, FR-005-008)
+ * @param {vec2} pos - Position to emit particles (usually player center)
+ */
+function spawnTierUpParticles(pos) {
+    // Fixed 100 particles, reduced by LOD if needed (FR-005-007)
+    const particleCount = Math.floor(100 * emissionMultiplier);
+
+    if (particleCount < 1) return; // Skip if LOD too aggressive
+
+    const config = PARTICLE_CONFIG.tierUp;
+    const colors = PARTICLE_COLORS.tierUp;
+
+    // Create massive explosion (FR-005-008-CLARIFIED: golden + rainbow variation)
+    new ParticleEmitter(
+        pos,                       // Position at player center
+        0,                         // Angle (0 = up, but 360° spread so doesn't matter)
+        1.0,                       // Emit size (larger cone)
+        config.emitTime,           // 0.01s instant burst
+        particleCount,             // 100 particles (5x more than collection)
+        config.emitConeAngle,      // PI*2 (360° spread)
+        undefined,                 // Colored circles (no sprite)
+        colors.startA, colors.startB, colors.endA, colors.endB,
+        config.particleTime,       // 1.0s lifespan (FR-005-009, 2x collection)
+        config.sizeStart, config.sizeEnd, config.speed,
+        config.angleVelocity, config.damping, config.angleDamping,
+        config.gravityScale, config.particleConeAngle, config.fadeRate
+    );
+
+    // Track for budget management
+    activeParticleCount += particleCount;
+}
+
+/**
+ * Spawn particle burst on collection (FR-005-001, FR-005-002)
+ * @param {vec2} pos - Position to emit particles
+ * @param {number} value - Object value (determines particle count)
+ */
+function spawnCollectionParticles(pos, value) {
+    // Calculate particle count using logarithmic formula (FR-005-002-CLARIFIED)
+    const baseCount = Math.floor(10 + Math.log10(value + 1) * 15);
+    const particleCount = Math.floor(baseCount * emissionMultiplier);
+
+    if (particleCount < 1) return; // Skip if LOD too aggressive
+
+    const config = PARTICLE_CONFIG.collection;
+    const colors = PARTICLE_COLORS.collection;
+
+    // Create particle burst (FR-005-003, FR-005-006)
+    new ParticleEmitter(
+        pos,                       // Position at collectible
+        PI,                        // Angle (down = upward burst in top-down)
+        0.5,                       // Emit size (cone radius)
+        config.emitTime,           // 0.01s instant burst
+        particleCount,             // Logarithmic count
+        config.emitConeAngle,      // PI (180° spread)
+        undefined,                 // Colored circles (no sprite)
+        colors.startA, colors.startB, colors.endA, colors.endB,
+        config.particleTime,       // 0.5s lifespan (FR-005-004)
+        config.sizeStart, config.sizeEnd, config.speed,
+        config.angleVelocity, config.damping, config.angleDamping,
+        config.gravityScale, config.particleConeAngle, config.fadeRate
+    );
+
+    // Track for budget management
+    activeParticleCount += particleCount;
+}
+
+/**
+ * Update particle budget - Adaptive LOD system (FR-005-013)
+ * Reduces particle emission when >400 particles active
+ * Restores full quality when <250 particles active
+ */
+function updateParticleBudget() {
+    // Decay active count (simulates particle lifespan)
+    activeParticleCount *= PARTICLE_BUDGET.decayRate;
+
+    // Adaptive LOD: reduce quality if too many particles
+    if (activeParticleCount > PARTICLE_BUDGET.reduceThreshold) {
+        emissionMultiplier = 0.5;  // Reduce to 50%
+    } else if (activeParticleCount < PARTICLE_BUDGET.restoreThreshold) {
+        emissionMultiplier = 1.0;  // Restore full quality
+    }
+}
+
+// ============================================================================
 // FEATURE 002: LEVEL PROGRESSION UTILITY FUNCTIONS
 // ============================================================================
 
@@ -699,6 +908,15 @@ class Collectible extends EngineObject {
             this.velocity = this.velocity.add(directionToPlayer.scale(magnetForce * 0.1));
 
             this.magnetActive = true;
+
+            // Feature 005: Magnetic trail particles (FR-005-010-CLARIFIED)
+            // Only emit if player is 90%+ of collection threshold
+            const sizeThreshold = this.size.x * 0.5; // 50% rule from FR-001
+            if (player.size.x >= sizeThreshold * 0.9) {
+                // Emit 1-2 trail particles per frame (random for variety)
+                const trailCount = Math.floor(1 + Math.random() * 2); // 1 or 2
+                spawnMagneticTrailParticles(this.pos, trailCount);
+            }
         } else {
             this.magnetActive = false;
         }
@@ -788,6 +1006,9 @@ class PlayerBall extends EngineObject {
         // Destroy collectible (FR-009)
         collectible.destroy();
 
+        // Feature 005: Particle burst on collection (FR-005-001, FR-005-002)
+        spawnCollectionParticles(collectible.pos, collectible.value);
+
         // Feature 004: Collection sound (FR-004-003, FR-004-004, T007)
         if (soundManager) {
             soundManager.playCollect(collectible.pos, collectible.value);
@@ -819,6 +1040,29 @@ class PlayerBall extends EngineObject {
 
         // Optional: Log collection for debugging
         // console.log('Collected', collectible.type, '| Score:', this.score);
+    }
+
+    /**
+     * Tier-up celebration - Placeholder for future tier system (FR-047)
+     * Feature 005: Emits tier-up particles (FR-005-007, FR-005-008)
+     * NOTE: This method is not automatically called yet (tier system not implemented)
+     * Can be manually triggered for testing: player.onTierUp()
+     */
+    onTierUp() {
+        // Feature 005: Massive particle explosion (100 particles, golden-rainbow)
+        spawnTierUpParticles(this.pos);
+
+        // Feature 003: Screen shake for tier-up (FR-030-004)
+        if (typeof SHAKE_TIER_UP !== 'undefined' && typeof cameraShake !== 'undefined') {
+            cameraShake = Math.min(cameraShake + SHAKE_TIER_UP, SHAKE_MAX);
+        }
+
+        // Feature 004: Tier-up sound (FR-004-005)
+        if (soundManager) {
+            soundManager.playTierUp(this.pos);
+        }
+
+        console.log('TIER UP! (Feature 005 particles, Feature 004 sound)');
     }
 
     render() {
