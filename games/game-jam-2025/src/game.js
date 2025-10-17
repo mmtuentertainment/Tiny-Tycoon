@@ -632,26 +632,21 @@ function spawnTierUpParticles(pos) {
 
     if (particleCount < 1) return; // Skip if LOD too aggressive
 
-    const config = PARTICLE_CONFIG.tierUp;
-    const colors = PARTICLE_COLORS.tierUp;
-
-    // Create massive explosion - FULL parameter list (FR-005-008-CLARIFIED)
+    // Use ULTRA MASSIVE settings for visibility (FR-005-008-CLARIFIED)
     new ParticleEmitter(
-        pos, 0,                    // 1-2: position, angle
-        1, config.emitTime,        // 3-4: emitSize, emitTime (0.01)
-        particleCount, config.emitConeAngle,  // 5-6: emitRate (100), emitConeAngle (PI*2)
-        tile(0, 16),               // 7: tileInfo (use player sprite)
-        colors.startA, colors.startB,  // 8-9: colorStartA, colorStartB
-        colors.endA, colors.endB,      // 10-11: colorEndA, colorEndB
-        config.particleTime,       // 12: particleTime (1.0s)
-        config.sizeStart, config.sizeEnd,  // 13-14: sizeStart, sizeEnd
-        config.speed,              // 15: speed (5 = fast burst!)
-        config.angleVelocity,      // 16: angleSpeed (0 = no rotation)
-        config.damping,            // 17: damping (0.9)
-        config.angleDamping,       // 18: angleDamping (1)
-        config.gravityScale,       // 19: gravityScale (0)
-        config.particleConeAngle,  // 20: particleConeAngle (PI*2)
-        config.fadeRate            // 21: fadeRate (0.05)
+        pos, 0,                    // emitPos, emitAngle
+        3, 0.2,                    // emitSize (3 = MASSIVE!), emitTime
+        particleCount, PI*2,       // emitRate (100), emitConeAngle (360°)
+        tile(0, 16),               // tileInfo
+        hsl(0.1,1,0.6), hsl(0.15,1,0.6),   // colorStartA, colorStartB (BRIGHT golden)
+        hsl(0.1,1,0.3,0), hsl(0.15,1,0.3,0), // colorEndA, colorEndB (fade)
+        5,                         // particleTime (5s - VERY LONG!)
+        3, 2,                      // sizeStart (3 = GIGANTIC!), sizeEnd (2 = still huge)
+        1, 0,                      // speed (1 = slow drift), angleSpeed
+        .98, 1,                    // damping (.98 = barely slows), angleDamping
+        0, PI*2,                   // gravityScale, particleConeAngle
+        .01, .5,                   // fadeRate (.01 = VERY slow fade), randomness
+        false, true                // collideTiles, additive (glow effect!)
     );
 
     // Track for budget management
@@ -1062,21 +1057,6 @@ class PlayerBall extends EngineObject {
      * Can be manually triggered for testing: player.onTierUp()
      */
     onTierUp() {
-        console.log('onTierUp called - player position:', this.pos, 'x:', this.pos.x, 'y:', this.pos.y);
-        console.log('Camera position:', cameraPos);
-
-        // TEST: ULTRA MASSIVE particles - GIGANTIC, VERY SLOW, VERY LONG
-        new ParticleEmitter(
-            this.pos, 0,              // emitPos, emitAngle
-            3, 0.2, 100, PI*2,        // emitSize (3 = MASSIVE!), emitTime, rate, cone
-            tile(0, 16),              // tileIndex, tileSize
-            hsl(0.1,1,0.6),   hsl(0.15,1,0.6),   // colorStartA, colorStartB (BRIGHT golden)
-            hsl(0.1,1,0.3,0), hsl(0.15,1,0.3,0), // colorEndA, colorEndB (fade)
-            5, 3, 2, 1, 0,            // time (5s!), sizeStart (3 = GIGANTIC!), sizeEnd (2 = still huge), speed (1 = very slow), angleSpeed
-            .98, 1, 0, PI*2,          // damping (.98 = barely slows), angleDamping, gravityScale, cone
-            .01, .5, false, true      // fadeRate (.01 = VERY slow fade), randomness, collide, additive
-        );
-
         // Feature 005: Massive particle explosion (100 particles, golden-rainbow)
         spawnTierUpParticles(this.pos);
 
