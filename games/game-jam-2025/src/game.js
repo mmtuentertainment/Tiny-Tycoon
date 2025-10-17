@@ -602,17 +602,16 @@ function spawnMagneticTrailParticles(pos, count) {
     // Create subtle trail particles (FR-005-010-CLARIFIED)
     new ParticleEmitter(
         pos,                       // Position at collectible
-        PI,                        // Angle (down = upward in top-down)
-        0.2,                       // Small emit size (subtle trail)
-        config.emitTime,           // 0.01s per-frame emission
-        particleCount,             // 1-2 particles per frame
-        config.emitConeAngle,      // 0.5 radians (narrow cone)
-        undefined,                 // Colored circles (no sprite)
-        colors.startA, colors.startB, colors.endA, colors.endB,
-        config.particleTime,       // 0.3s lifespan (short, subtle)
-        config.sizeStart, config.sizeEnd, config.speed,
-        config.angleVelocity, config.damping, config.angleDamping,
-        config.gravityScale, config.particleConeAngle, config.fadeRate
+        PI,                        // Angle
+        0.2,                       // Emit size
+        config.emitTime,           // Emit time (0.01s)
+        particleCount,             // Emit rate (1-2)
+        config.emitConeAngle,      // Emit cone angle (0.5)
+        undefined,                 // Tile info (colored circles)
+        colors.startA, colors.startB, colors.endA, colors.endB,  // Colors
+        config.particleTime,       // Particle time (0.3s)
+        config.sizeStart, config.sizeEnd,  // Size start/end
+        config.speed               // Speed
     );
 
     // Track for budget management
@@ -646,19 +645,19 @@ function spawnTierUpParticles(pos) {
     console.log('Colors:', colors);
 
     // Create massive explosion (FR-005-008-CLARIFIED: golden + rainbow variation)
+    // Using simplified LittleJS ParticleEmitter signature
     const emitter = new ParticleEmitter(
         pos,                       // Position at player center
-        0,                         // Angle (0 = up, but 360° spread so doesn't matter)
-        1.0,                       // Emit size (larger cone)
-        config.emitTime,           // 0.01s instant burst
-        particleCount,             // 100 particles (5x more than collection)
-        config.emitConeAngle,      // PI*2 (360° spread)
-        undefined,                 // Colored circles (no sprite)
-        colors.startA, colors.startB, colors.endA, colors.endB,
-        config.particleTime,       // 1.0s lifespan (FR-005-009, 2x collection)
-        config.sizeStart, config.sizeEnd, config.speed,
-        config.angleVelocity, config.damping, config.angleDamping,
-        config.gravityScale, config.particleConeAngle, config.fadeRate
+        0,                         // Angle
+        1.0,                       // Emit size
+        config.emitTime,           // Emit time (0.01s)
+        particleCount,             // Emit rate (100 particles)
+        config.emitConeAngle,      // Emit cone angle (PI*2)
+        undefined,                 // Tile info (undefined = colored circles)
+        colors.startA, colors.startB, colors.endA, colors.endB,  // Colors
+        config.particleTime,       // Particle time (1.0s)
+        config.sizeStart, config.sizeEnd,  // Size start/end
+        config.speed               // Speed
     );
 
     console.log('ParticleEmitter created:', emitter);
@@ -686,17 +685,16 @@ function spawnCollectionParticles(pos, value) {
     // Create particle burst (FR-005-003, FR-005-006)
     new ParticleEmitter(
         pos,                       // Position at collectible
-        PI,                        // Angle (down = upward burst in top-down)
-        0.5,                       // Emit size (cone radius)
-        config.emitTime,           // 0.01s instant burst
-        particleCount,             // Logarithmic count
-        config.emitConeAngle,      // PI (180° spread)
-        undefined,                 // Colored circles (no sprite)
-        colors.startA, colors.startB, colors.endA, colors.endB,
-        config.particleTime,       // 0.5s lifespan (FR-005-004)
-        config.sizeStart, config.sizeEnd, config.speed,
-        config.angleVelocity, config.damping, config.angleDamping,
-        config.gravityScale, config.particleConeAngle, config.fadeRate
+        PI,                        // Angle
+        0.5,                       // Emit size
+        config.emitTime,           // Emit time (0.01s)
+        particleCount,             // Emit rate (logarithmic)
+        config.emitConeAngle,      // Emit cone angle (PI)
+        undefined,                 // Tile info (colored circles)
+        colors.startA, colors.startB, colors.endA, colors.endB,  // Colors
+        config.particleTime,       // Particle time (0.5s)
+        config.sizeStart, config.sizeEnd,  // Size start/end
+        config.speed               // Speed
     );
 
     // Track for budget management
