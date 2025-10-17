@@ -78,26 +78,8 @@ const ZZFX_SOUNDS = {
 // ============================================================================
 
 // Particle color definitions (FR-005-003, FR-005-008-CLARIFIED)
-const PARTICLE_COLORS = {
-    collection: {
-        startA: new Color(1, 1, 0, 1),        // Bright yellow
-        startB: new Color(1, 1, 0, 1),        // Same (no variation)
-        endA: new Color(1, 0.5, 0, 0),        // Orange fade to transparent
-        endB: new Color(1, 0.5, 0, 0)         // Same
-    },
-    tierUp: {
-        startA: new Color(1, 0.9, 0.2, 1),    // Golden
-        startB: new Color(1, 0.7, 0.1, 1),    // Variation (±30% hue)
-        endA: new Color(1, 0.5, 0, 0),        // Orange fade
-        endB: new Color(1, 0.3, 0, 0)         // Darker orange fade
-    },
-    magneticTrail: {
-        startA: new Color(1, 1, 0.5, 0.8),    // Pale yellow, semi-transparent
-        startB: new Color(1, 1, 0.5, 0.8),    // Same
-        endA: new Color(1, 1, 0.5, 0),        // Fade to transparent
-        endB: new Color(1, 1, 0.5, 0)         // Same
-    }
-};
+// NOTE: Initialized in gameInit() after LittleJS Color class is available
+let PARTICLE_COLORS;
 
 // Particle configuration (consolidates all FRs)
 const PARTICLE_CONFIG = {
@@ -296,6 +278,28 @@ function gameInit() {
 
     // Feature 004: Initialize sound system (FR-004-011, T005)
     soundManager = new SoundManager();
+
+    // Feature 005: Initialize particle colors (FR-005-003, FR-005-008)
+    PARTICLE_COLORS = {
+        collection: {
+            startA: new Color(1, 1, 0, 1),        // Bright yellow
+            startB: new Color(1, 1, 0, 1),        // Same (no variation)
+            endA: new Color(1, 0.5, 0, 0),        // Orange fade to transparent
+            endB: new Color(1, 0.5, 0, 0)         // Same
+        },
+        tierUp: {
+            startA: new Color(1, 0.9, 0.2, 1),    // Golden
+            startB: new Color(1, 0.7, 0.1, 1),    // Variation (±30% hue)
+            endA: new Color(1, 0.5, 0, 0),        // Orange fade
+            endB: new Color(1, 0.3, 0, 0)         // Darker orange fade
+        },
+        magneticTrail: {
+            startA: new Color(1, 1, 0.5, 0.8),    // Pale yellow, semi-transparent
+            startB: new Color(1, 1, 0.5, 0.8),    // Same
+            endA: new Color(1, 1, 0.5, 0),        // Fade to transparent
+            endB: new Color(1, 1, 0.5, 0)         // Same
+        }
+    };
 
     // Initialize COLLECTIBLE_DATA now that LittleJS Color is available
     COLLECTIBLE_DATA = {
