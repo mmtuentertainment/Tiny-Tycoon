@@ -599,19 +599,16 @@ function spawnMagneticTrailParticles(pos, count) {
     const config = PARTICLE_CONFIG.magneticTrail;
     const colors = PARTICLE_COLORS.magneticTrail;
 
-    // Create subtle trail particles (FR-005-010-CLARIFIED)
+    // Create subtle trail particles - working 13-parameter pattern (FR-005-010-CLARIFIED)
     new ParticleEmitter(
-        pos,                       // Position at collectible
-        PI,                        // Angle
-        0.2,                       // Emit size
-        config.emitTime,           // Emit time (0.01s)
-        particleCount,             // Emit rate (1-2)
-        config.emitConeAngle,      // Emit cone angle (0.5)
-        undefined,                 // Tile info (colored circles)
-        colors.startA, colors.startB, colors.endA, colors.endB,  // Colors
-        config.particleTime,       // Particle time (0.3s)
-        config.sizeStart, config.sizeEnd,  // Size start/end
-        config.speed               // Speed
+        pos, PI,                   // emitPos, emitAngle
+        0.2, config.emitTime,      // emitSize, emitTime (0.01)
+        particleCount, config.emitConeAngle,  // emitRate (1-2), emitConeAngle (0.5)
+        tile(0, 16),               // tileInfo (use player sprite)
+        colors.startA, colors.startB,  // colorStartA, colorStartB
+        colors.endA, colors.endB,      // colorEndA, colorEndB
+        config.particleTime,       // particleTime (0.3s)
+        config.sizeStart, config.sizeEnd  // sizeStart, sizeEnd
     );
 
     // Track for budget management
@@ -626,45 +623,25 @@ function spawnTierUpParticles(pos) {
     // Fixed 100 particles, reduced by LOD if needed (FR-005-007)
     const particleCount = Math.floor(100 * emissionMultiplier);
 
-    console.log('=== SPAWN TIER UP PARTICLES ===');
-    console.log('Position:', pos);
-    console.log('Particle count:', particleCount);
-    console.log('Emission multiplier:', emissionMultiplier);
-    console.log('PARTICLE_COLORS:', PARTICLE_COLORS);
-    console.log('PARTICLE_CONFIG:', PARTICLE_CONFIG);
-
-    if (particleCount < 1) {
-        console.log('SKIPPING: particle count < 1');
-        return; // Skip if LOD too aggressive
-    }
+    if (particleCount < 1) return; // Skip if LOD too aggressive
 
     const config = PARTICLE_CONFIG.tierUp;
     const colors = PARTICLE_COLORS.tierUp;
 
-    console.log('Config:', config);
-    console.log('Colors:', colors);
-
-    // Create massive explosion (FR-005-008-CLARIFIED: golden + rainbow variation)
-    // Using tile(0,16) instead of undefined - may fix rendering issue
-    const emitter = new ParticleEmitter(
-        pos,                       // Position at player center
-        0,                         // Angle
-        1.0,                       // Emit size
-        config.emitTime,           // Emit time (0.01s)
-        particleCount,             // Emit rate (100 particles)
-        config.emitConeAngle,      // Emit cone angle (PI*2)
-        tile(0,16),                // Tile info (use player tile 0 as particle sprite)
-        colors.startA, colors.startB, colors.endA, colors.endB,  // Colors
-        config.particleTime,       // Particle time (1.0s)
-        config.sizeStart, config.sizeEnd,  // Size start/end
-        config.speed               // Speed
+    // Create massive explosion - working 13-parameter pattern (FR-005-008-CLARIFIED)
+    new ParticleEmitter(
+        pos, 0,                    // emitPos, emitAngle
+        1, config.emitTime,        // emitSize, emitTime (0.01)
+        particleCount, config.emitConeAngle,  // emitRate (100), emitConeAngle (PI*2)
+        tile(0, 16),               // tileInfo (use player sprite)
+        colors.startA, colors.startB,  // colorStartA, colorStartB
+        colors.endA, colors.endB,      // colorEndA, colorEndB
+        config.particleTime,       // particleTime (1.0s)
+        config.sizeStart, config.sizeEnd  // sizeStart, sizeEnd
     );
-
-    console.log('ParticleEmitter created:', emitter);
 
     // Track for budget management
     activeParticleCount += particleCount;
-    console.log('Active particle count:', activeParticleCount);
 }
 
 /**
@@ -682,19 +659,16 @@ function spawnCollectionParticles(pos, value) {
     const config = PARTICLE_CONFIG.collection;
     const colors = PARTICLE_COLORS.collection;
 
-    // Create particle burst (FR-005-003, FR-005-006)
+    // Create particle burst - working 13-parameter pattern (FR-005-003, FR-005-006)
     new ParticleEmitter(
-        pos,                       // Position at collectible
-        PI,                        // Angle
-        0.5,                       // Emit size
-        config.emitTime,           // Emit time (0.01s)
-        particleCount,             // Emit rate (logarithmic)
-        config.emitConeAngle,      // Emit cone angle (PI)
-        undefined,                 // Tile info (colored circles)
-        colors.startA, colors.startB, colors.endA, colors.endB,  // Colors
-        config.particleTime,       // Particle time (0.5s)
-        config.sizeStart, config.sizeEnd,  // Size start/end
-        config.speed               // Speed
+        pos, PI,                   // emitPos, emitAngle (PI = down, upward burst)
+        0.5, config.emitTime,      // emitSize, emitTime (0.01)
+        particleCount, config.emitConeAngle,  // emitRate (logarithmic), emitConeAngle (PI)
+        tile(0, 16),               // tileInfo (use player sprite)
+        colors.startA, colors.startB,  // colorStartA, colorStartB
+        colors.endA, colors.endB,      // colorEndA, colorEndB
+        config.particleTime,       // particleTime (0.5s)
+        config.sizeStart, config.sizeEnd  // sizeStart, sizeEnd
     );
 
     // Track for budget management
@@ -1067,20 +1041,6 @@ class PlayerBall extends EngineObject {
      * Can be manually triggered for testing: player.onTierUp()
      */
     onTierUp() {
-        // TEST: Ultra-simple particle test with LittleJS example pattern
-        console.log('Creating test particles at position:', this.pos);
-        const testEmitter = new ParticleEmitter(
-            this.pos, 0,              // emitPos, emitAngle
-            1, 0.1, 100, PI*2,        // emitSize, emitTime, rate, cone
-            tile(0, 16),              // tileInfo
-            new Color(1, 1, 0, 1),    // colorStartA
-            new Color(1, 0.5, 0, 1),  // colorStartB
-            new Color(1, 1, 0, 0),    // colorEndA
-            new Color(1, 0, 0, 0),    // colorEndB
-            1.0, 0.5, 0.1             // particleTime, sizeStart, sizeEnd
-        );
-        console.log('Test emitter created:', testEmitter);
-
         // Feature 005: Massive particle explosion (100 particles, golden-rainbow)
         spawnTierUpParticles(this.pos);
 
