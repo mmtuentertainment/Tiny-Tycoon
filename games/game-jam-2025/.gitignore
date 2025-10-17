@@ -9,6 +9,7 @@ dist/
 # OS files
 .DS_Store
 Thumbs.db
+*.Zone.Identifier
 
 # IDE
 .vscode/settings.json
@@ -26,3 +27,13 @@ npm-debug.log*
 # Environment
 .env
 .env.local
+.vercel
+
+# Screenshots and temp docs
+Screenshot*.png
+test-*.html
+
+# Spec-Kit setup markers (one-time use)
+SPEC-KIT-SETUP-COMPLETE.md
+MCP-INSTALLATION-COMPLETE.md
+SETUP-COMPLETE.md
