@@ -62,6 +62,23 @@ const STATE = {
 };
 
 // ============================================================================
+// SCREEN SHAKE CONSTANTS (Feature 003: FR-030)
+// ============================================================================
+// Tuned values from research. MAY adjust during playtesting.
+// Formula: shakePower = SHAKE_BASE + (objectValue * SHAKE_VALUE_MULTIPLIER)
+const SHAKE_BASE = 0.05;                // Min shake (penny: $1 → 0.05)
+const SHAKE_VALUE_MULTIPLIER = 0.0001;  // Multiplier (yacht: $5M → 0.55)
+const SHAKE_MAX = 2.5;                  // Max cumulative shake per frame
+const SHAKE_TIER_UP = 0.3;              // Tier-up celebration shake (future)
+const SHAKE_VICTORY = 0.5;              // Victory celebration shake
+
+// Example calculations (for reference):
+// Penny ($10):         0.05 + (10 * 0.0001) = 0.051 (subtle)
+// Customer ($50):      0.05 + (50 * 0.0001) = 0.055 (slightly more)
+// Yacht ($5,000,000):  0.05 + (5000000 * 0.0001) = 0.55 (dramatic)
+// Rocket ($2B):        0.05 + (2000000000 * 0.0001) = 200.05 → clamped to 2.5 (extreme)
+
+// ============================================================================
 // GLOBAL VARIABLES
 // ============================================================================
 
@@ -619,11 +636,19 @@ class PlayerBall extends EngineObject {
         // Destroy collectible (FR-009)
         collectible.destroy();
 
+        // Feature 003: Value-scaled screen shake (FR-030-001, FR-030-002, FR-030-003)
+        const shakePower = SHAKE_BASE + (collectible.value * SHAKE_VALUE_MULTIPLIER);
+        cameraShake = Math.min(cameraShake + shakePower, SHAKE_MAX); // Accumulate and clamp
+
         // Feature 002: Check win condition immediately after size update (T007)
         if (levelState === STATE.PLAYING &&
             this.size.x >= LEVEL_CONFIG[currentLevel].targetSize) {
             levelState = STATE.VICTORY;
             transitionStartTime = time;
+
+            // Feature 003: Victory shake (FR-030-005, FR-030-009)
+            cameraShake = Math.min(cameraShake + SHAKE_VICTORY, SHAKE_MAX);
+
             console.log('VICTORY! Target size reached!');
         }
 
