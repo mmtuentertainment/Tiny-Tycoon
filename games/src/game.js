@@ -953,7 +953,7 @@ function gameRenderPost() {
         drawTextScreen(`Biggest W: ${biggestW}`, vec2(centerX, centerY - 60), 28, new Color(1, 1, 1));
         drawTextScreen('POV: Billionaire mindset achieved ✅', vec2(centerX, centerY - 100), 28, new Color(0, 1, 0));
         drawTextScreen('They said touch grass. You touched MARS 🚀', vec2(centerX, centerY - 140), 24, new Color(0.9, 0.9, 0.9));
-        drawTextScreen('Now go outside (we're not responsible)', vec2(centerX, centerY - 180), 22, new Color(0.7, 0.7, 0.7));
+        drawTextScreen('Now go outside (we\'re not responsible)', vec2(centerX, centerY - 180), 22, new Color(0.7, 0.7, 0.7));
         return; // Skip normal HUD
     }
 
