@@ -47,7 +47,7 @@ const LEVEL_CONFIG = [
         startingPlayerSize: 0.5,
         collectibleSizeMin: 10.0,           // Even larger objects
         collectibleSizeMax: 40.0,
-        collectibleSpawnCount: { min: 25, max: 40 }, // PERFORMANCE: Reduced from 50-80 (50% less!)
+        collectibleSpawnCount: { min: 50, max: 80 }, // RESTORED: Level 3 needs more objects to reach size 50!
         difficulty: 'Hard'
     }
 ];
@@ -333,6 +333,21 @@ class PopupTextManager {
  */
 class SoundManager {
     constructor() {
+        this.audioInitialized = false;
+        this.sound_collect = null;
+        this.sound_tierUp = null;
+        this.sound_victory = null;
+        this.sound_defeat = null;
+        this.sound_timerWarning = null;
+
+        // FIX: Defer audio initialization until first user interaction
+        // Browser security requires user gesture before AudioContext
+        this.initializeSounds();
+    }
+
+    initializeSounds() {
+        if (this.audioInitialized) return;
+
         try {
             // Pre-cache Sound objects (FR-004-001)
             this.sound_collect = new Sound(ZZFX_SOUNDS.collect);
@@ -340,15 +355,11 @@ class SoundManager {
             this.sound_victory = new Sound(ZZFX_SOUNDS.victory);
             this.sound_defeat = new Sound(ZZFX_SOUNDS.defeat);
             this.sound_timerWarning = new Sound(ZZFX_SOUNDS.timerWarning);
+            this.audioInitialized = true;
             console.log('SoundManager initialized successfully');
         } catch (error) {
             // FR-004-018: Graceful degradation
             console.warn('Audio failed to initialize:', error);
-            this.sound_collect = null;
-            this.sound_tierUp = null;
-            this.sound_victory = null;
-            this.sound_defeat = null;
-            this.sound_timerWarning = null;
         }
     }
 
@@ -367,6 +378,8 @@ class SoundManager {
      * FR-004-013: Volume scales inversely with simultaneous collections
      */
     playCollect(pos, value, collectionsThisFrame = 1) {
+        // FIX: Try to initialize audio on first play (user gesture)
+        if (!this.audioInitialized) this.initializeSounds();
         if (!this.sound_collect) return; // Silent if audio failed
 
         // Pitch scales with value: high pitch (pennies) → low pitch (yachts)
@@ -680,6 +693,13 @@ function gameInit() {
             level: 3,
             sizeRange: [1.5, 2.0],
             color: new Color(0.1, 0.3, 0.6)  // Blue car
+        },
+        houseL3: {
+            name: 'HOUSE',
+            value: 20000,
+            level: 3,
+            sizeRange: [2.5, 3.5],
+            color: new Color(0.8, 0.6, 0.4)  // Beige house
         },
         yacht: {
             name: 'YACHT',
@@ -1414,11 +1434,32 @@ class Collectible extends EngineObject {
     update() {
         super.update();
 
-        // PERFORMANCE: Disable magnetic attraction temporarily to fix lag
-        // Will re-enable after optimizing spatial partitioning
-        // Magnetic attraction was running for all 40-80 objects every frame
-        // Each doing distance calc + normalize + velocity updates = lag
+        // PERFORMANCE: Optimized magnetic attraction - only check if player nearby
+        // Old version checked ALL 80 objects every frame = lag
+        // New version: spatial check first, then magnetism only if within range
         this.magnetActive = false;
+
+        if (player) {
+            // Quick Manhattan distance check (no sqrt!) - same as collision optimization
+            const dx = Math.abs(this.pos.x - player.pos.x);
+            const dy = Math.abs(this.pos.y - player.pos.y);
+            const attractRange = player.size.x * 3;  // Attract within 3x player radius
+
+            // Skip if too far (most objects filtered here - FAST)
+            if (dx > attractRange || dy > attractRange) return;
+
+            // Precise distance check only for nearby objects (~5-10 max)
+            const dist = this.pos.distance(player.pos);
+
+            if (dist < attractRange && dist > 0 && player.size.x > this.size.x) {
+                this.magnetActive = true;
+
+                // Pull toward player (FR-006)
+                const pullDirection = player.pos.subtract(this.pos).normalize();
+                const pullStrength = 0.02;  // Subtle attraction
+                this.velocity = this.velocity.add(pullDirection.scale(pullStrength));
+            }
+        }
     }
 
     render() {
@@ -1541,14 +1582,14 @@ class PlayerBall extends EngineObject {
         }
 
         // Feature 005: Particle burst on collection (FR-005-001, FR-005-002)
-        // PERFORMANCE TEST: Temporarily disabled to diagnose lag
-        // spawnCollectionParticles(collectible.pos, collectible.value);
+        // Re-enabled after fixing root cause (spawn counts reduced)
+        spawnCollectionParticles(collectible.pos, collectible.value);
 
         // Feature 004: Collection sound (FR-004-003, FR-004-004, T007)
-        // PERFORMANCE TEST: Temporarily disabled to diagnose lag
-        // if (soundManager) {
-        //     soundManager.playCollect(collectible.pos, collectible.value);
-        // }
+        // Re-enabled after fixing root cause (spawn counts reduced)
+        if (soundManager) {
+            soundManager.playCollect(collectible.pos, collectible.value);
+        }
 
         // Feature 003: Value-scaled screen shake (FR-030-001, FR-030-002, FR-030-003)
         const shakePower = SHAKE_BASE + (collectible.value * SHAKE_VALUE_MULTIPLIER);
