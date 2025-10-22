@@ -158,6 +158,67 @@ GENERATIONAL WEALTH UNLOCKED
 
 ---
 
+## Clarifications
+
+### Question 1: Level Intro Display Mechanism
+**Q**: Should level intros be overlay text that pauses gameplay, text displayed while gameplay is active, or just update existing HUD text?
+
+**A**: **Option C - Update existing HUD text at level start** (simplest approach). No separate intro screens, no pause system. Just replace the existing "Level 1" text with personality-injected version during the first few seconds of gameplay.
+
+**Updated Requirement**:
+- **FR-007-010**: Level intro personality text MUST be displayed via existing HUD (no new screens/overlays)
+- **FR-007-011**: HUD level text MUST show for first 3 seconds of level, then fade/remove if desired (optional)
+
+---
+
+### Question 2: Defeat Screen Text Specificity
+**Q**: Since defeat screen is "MAY include ironic commentary (optional)", should we update it minimally, match victory energy, or keep generic?
+
+**A**: **Option B - Add minimal irony** ("Grind interrupted. Retry sigma?"). Adds personality without major work, keeps 1-2 hour estimate.
+
+**Updated Requirement**:
+- **FR-007-012**: Defeat screen MUST include minimal irony: "Grind interrupted" or "Rare L moment" or similar
+- **FR-007-013**: Defeat text MUST maintain encouraging tone (not discouraging) - "Retry?" or "Run it back?"
+
+---
+
+### Question 3: Game Complete Screen (After Level 3)
+**Q**: Should game complete screen (STATE.GAME_COMPLETE after all 3 levels) get unique text or stay unchanged?
+
+**A**: **Option B - Unique max absurdity text** ("YOU WON CAPITALISM / UNGOVERNABLE ACHIEVED / GG NO RE"). This is the ultimate celebration moment, worth the extra 15 minutes.
+
+**Updated Requirement**:
+- **FR-007-014**: Game complete screen MUST have unique text separate from Level 3 victory
+- **FR-007-015**: Game complete text MUST include maximum absurdity: "YOU WON CAPITALISM", "UNGOVERNABLE STATUS: ACHIEVED", or similar
+- **FR-007-016**: Game complete may include meta-commentary: "Touch grass? Never." or "Sigma grindset: COMPLETED ✅"
+
+---
+
+### Question 4: Emoji Cross-Browser Support
+**Q**: If emoji doesn't render (older browsers, Linux), should we use ASCII fallbacks, test first, or let it fail?
+
+**A**: **Option C - Test in target browsers first, remove problematic emoji**. Pragmatic for jam. If ✅ and 💀 work in Chrome/Firefox/Safari, use them. If 💎 or 🔥 are problematic, replace with text ("DIAMOND" / "FIRE").
+
+**Updated Requirement**:
+- **FR-007-017**: Emoji MUST be tested in Chrome, Firefox, Safari (latest 2 versions) before submission
+- **FR-007-018**: If emoji renders as box (☐), MUST replace with ASCII: "✅" → "[X]", "💀" → "(skull)", "💎" → "GEM"
+- **FR-007-019**: Priority emoji to test: ✅ (checkmark), 💀 (skull), 💎 (diamond) - these are most used
+
+---
+
+### Question 5: "Biggest W" Object Name Source
+**Q**: Should "Biggest W" stat track highest VALUE object, largest SIZE object, or last object collected?
+
+**A**: **Option A - Highest VALUE object collected** (e.g., SPACE ROCKET at $2B). Makes most sense thematically for "biggest win". Requires tracking `player.biggestCollectedValue` and `player.biggestCollectedName` during gameplay.
+
+**Updated Requirement**:
+- **FR-007-020**: PlayerBall MUST track `biggestCollectedValue` (number) and `biggestCollectedName` (string) during collection
+- **FR-007-021**: On collection, IF collectible.value > player.biggestCollectedValue, THEN update both tracking fields
+- **FR-007-022**: Victory screen "Biggest W" MUST display player.biggestCollectedName (e.g., "Biggest W: SPACE ROCKET")
+- **FR-007-023**: If no objects collected (edge case), display "Biggest W: (none)" or hide stat
+
+---
+
 ## Technical Context *(optional but recommended)*
 
 ### Related Constitution Articles
@@ -221,7 +282,8 @@ Simple find/replace with personality injection.
 
 ---
 
-**Status**: Ready for `/speckit.plan`
+**Status**: Clarifications Complete - Ready for `/speckit.plan`
 **Priority**: P3 - Week 3 (Oct 28-Nov 2)
-**Estimated Implementation**: 1-2 hours
+**Estimated Implementation**: 1.5-2.5 hours (updated for tracking "Biggest W" + game complete screen)
 **Impact**: MEDIUM-HIGH (adds character, makes game memorable)
+**Clarified**: 2025-10-22 - 5 ambiguities resolved, 14 new FRs added (FR-007-010 to FR-007-023)

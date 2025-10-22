@@ -370,7 +370,8 @@ class SoundManager {
         if (!this.sound_collect) return; // Silent if audio failed
 
         // Pitch scales with value: high pitch (pennies) → low pitch (yachts)
-        const rawPitch = 1 + (value * 0.001);
+        const valueMagnitude = Math.log10(Math.max(1, value));
+        const rawPitch = 1.5 - (valueMagnitude * 0.1);
         const pitch = this.clampPitch(rawPitch);
 
         // Volume scales inversely with simultaneous collections to prevent clipping
@@ -789,45 +790,82 @@ function gameRenderPost() {
 
     // Calculate display values
     const sizeMultiplier = (player.size.x / 0.5).toFixed(1);
-    const scoreFormatted = player.score.toLocaleString();
+    const levelScoreFormatted = player.score.toLocaleString();
+    const totalScoreFormatted = player.totalScore.toLocaleString();
 
-    // Feature 002: Victory screen (T013, T037 - enhanced with stats)
+    // Feature 007: Victory screen with Gen Alpha personality (FR-007-001/002/003/004)
     if (levelState === STATE.VICTORY) {
         // Semi-transparent black overlay
         drawRect(cameraPos, vec2(1000, 1000), new Color(0, 0, 0, 0.7));
 
         const centerX = mainCanvasSize.x / 2;
         const centerY = mainCanvasSize.y / 2;
+        const config = LEVEL_CONFIG[currentLevel];
+        const levelNum = config.levelNumber;
 
-        // Victory message
-        drawTextScreen('LEVEL COMPLETE!', vec2(centerX, centerY + 60), 64, new Color(0, 1, 0));
-        drawTextScreen(`Final Size: ${sizeMultiplier}x`, vec2(centerX, centerY + 10), 32, new Color(1, 1, 1));
-
-        // Time remaining stat (T037)
+        // Get biggest W stat (FR-007-022)
+        const biggestW = player.biggestCollectedName || '(none)';
         const timeRemaining = formatTime(remainingTime);
-        drawTextScreen(`Time Remaining: ${timeRemaining}`, vec2(centerX, centerY - 30), 28, new Color(1, 1, 1));
 
-        drawTextScreen('Press any key to continue...', vec2(centerX, centerY - 100), 24, new Color(0.7, 0.7, 0.7));
+        // Level-specific personality text (FR-007-001, FR-007-002, FR-007-003)
+        let titleText, subtitleText, scoreLabel, sizeLabel, flavorText;
+
+        if (levelNum === 1) {
+            // Level 1: Broke Era - Uncommon grindset
+            titleText = 'LEVEL 1 COMPLETE';
+            subtitleText = 'UNCOMMON GRINDSET UNLOCKED ✅';
+            scoreLabel = `Portfolio: $${levelScoreFormatted} (Bussin fr fr)`;
+            sizeLabel = `Size: ${sizeMultiplier}x (Growing fr)`;
+            flavorText = 'Press SPACE for next level';
+        } else if (levelNum === 2) {
+            // Level 2: Mid-tier - Influencer status
+            titleText = 'LEVEL 2 COMPLETE';
+            subtitleText = 'MID-TIER INFLUENCER ACHIEVED 📱';
+            scoreLabel = `Net Worth: $${levelScoreFormatted} (It\'s giving hustle)`;
+            sizeLabel = `Size: ${sizeMultiplier}x (Massive W)`;
+            flavorText = 'Press SPACE for oligarch status';
+        } else {
+            // Level 3: Oligarch - Generational wealth
+            titleText = 'LEVEL 3 COMPLETE';
+            subtitleText = 'OLIGARCH STATUS: CONFIRMED ✅';
+            scoreLabel = `Portfolio: $${levelScoreFormatted} (No cap legendary)`;
+            sizeLabel = `Size: ${sizeMultiplier}x (UNGOVERNABLE)`;
+            flavorText = 'Press SPACE to flex';
+        }
+
+        // Render victory text (FR-007-004)
+        drawTextScreen(titleText, vec2(centerX, centerY + 100), 48, new Color(0, 1, 0));
+        drawTextScreen(subtitleText, vec2(centerX, centerY + 50), 36, new Color(1, 1, 0));
+        drawTextScreen(scoreLabel, vec2(centerX, centerY), 28, new Color(1, 1, 1));
+        drawTextScreen(sizeLabel, vec2(centerX, centerY - 35), 28, new Color(1, 1, 1));
+        drawTextScreen(`Biggest W: ${biggestW}`, vec2(centerX, centerY - 70), 24, new Color(1, 1, 0));
+        drawTextScreen(`Time: ${timeRemaining} remaining`, vec2(centerX, centerY - 105), 24, new Color(0.8, 0.8, 0.8));
+        drawTextScreen(flavorText, vec2(centerX, centerY - 150), 24, new Color(0.7, 0.7, 0.7));
         return; // Skip normal HUD when showing victory screen
     }
 
-    // Feature 002: Game Complete screen (T039)
+    // Feature 007: Game complete screen with maximum absurdity (FR-007-014/015/016)
     if (levelState === STATE.GAME_COMPLETE) {
         // Semi-transparent black overlay
         drawRect(cameraPos, vec2(1000, 1000), new Color(0, 0, 0, 0.7));
 
         const centerX = mainCanvasSize.x / 2;
         const centerY = mainCanvasSize.y / 2;
+        const biggestW = player.biggestCollectedName || 'NOTHING';
 
-        // Game complete message
-        drawTextScreen('CONGRATULATIONS!', vec2(centerX, centerY + 80), 64, new Color(1, 1, 0));
-        drawTextScreen('ALL LEVELS COMPLETE!', vec2(centerX, centerY + 20), 48, new Color(0, 1, 0));
-        drawTextScreen(`Final Score: $${scoreFormatted}`, vec2(centerX, centerY - 30), 32, new Color(1, 1, 1));
-        drawTextScreen(`Final Size: ${sizeMultiplier}x`, vec2(centerX, centerY - 70), 32, new Color(1, 1, 1));
+        // Maximum absurdity text
+        drawTextScreen('🎮 GAME COMPLETE 🎮', vec2(centerX, centerY + 120), 54, new Color(1, 1, 0));
+        drawTextScreen('YOU WON CAPITALISM', vec2(centerX, centerY + 70), 48, new Color(0, 1, 0));
+        drawTextScreen(`Size: ${sizeMultiplier}x (COSMIC)`, vec2(centerX, centerY + 20), 32, new Color(1, 1, 1));
+        drawTextScreen(`Total: $${totalScoreFormatted} (Generational)`, vec2(centerX, centerY - 20), 32, new Color(1, 1, 0));
+        drawTextScreen(`Biggest W: ${biggestW}`, vec2(centerX, centerY - 60), 28, new Color(1, 1, 1));
+        drawTextScreen('UNGOVERNABLE STATUS: ACHIEVED ✅', vec2(centerX, centerY - 100), 28, new Color(0, 1, 0));
+        drawTextScreen('Touch grass? Nah, touch ASSETS 💎', vec2(centerX, centerY - 140), 24, new Color(0.9, 0.9, 0.9));
+        drawTextScreen('You are now INEVITABLE', vec2(centerX, centerY - 180), 22, new Color(0.7, 0.7, 0.7));
         return; // Skip normal HUD
     }
 
-    // Feature 002: Defeat screen (T016)
+    // Feature 007: Defeat screen with minimal irony (FR-007-012, FR-007-013)
     if (levelState === STATE.DEFEAT) {
         // Semi-transparent black overlay
         drawRect(cameraPos, vec2(1000, 1000), new Color(0, 0, 0, 0.7));
@@ -837,16 +875,17 @@ function gameRenderPost() {
         const config = LEVEL_CONFIG[currentLevel];
         const targetMultiplier = (config.targetSize / 0.5).toFixed(1);
 
-        // Defeat message
-        drawTextScreen('TIME\'S UP!', vec2(centerX, centerY + 60), 64, new Color(1, 0, 0));
+        // Minimal irony (encouraging tone maintained)
+        drawTextScreen('GRIND INTERRUPTED 💀', vec2(centerX, centerY + 80), 56, new Color(1, 0.3, 0));
         drawTextScreen(
-            `Size: ${sizeMultiplier}x / ${targetMultiplier}x`,
-            vec2(centerX, centerY),
-            32,
+            `Size: ${sizeMultiplier}x / ${targetMultiplier}x (Not enough)`,
+            vec2(centerX, centerY + 20),
+            28,
             new Color(1, 1, 1)
         );
-        drawTextScreen('Try again!', vec2(centerX, centerY - 40), 32, new Color(1, 1, 1));
-        drawTextScreen('Press any key to retry...', vec2(centerX, centerY - 100), 24, new Color(0.7, 0.7, 0.7));
+        drawTextScreen(`Portfolio: $${levelScoreFormatted} (Rare L moment)`, vec2(centerX, centerY - 20), 28, new Color(1, 1, 1));
+        drawTextScreen('Run it back? Press SPACE to retry', vec2(centerX, centerY - 70), 24, new Color(0.8, 0.8, 0.8));
+        drawTextScreen('Sigma tip: Collect bigger objects first', vec2(centerX, centerY - 110), 20, new Color(0.6, 0.6, 0.6));
         return; // Skip normal HUD when showing defeat screen
     }
 
@@ -895,11 +934,13 @@ function gameRenderPost() {
         new Color(0, 0, 0)
     );
 
-    // Feature 002: Level indicator (T033)
+    // Feature 007: Level indicator with personality subtitle (FR-007-010)
+    const levelSubtitles = ['BROKE ERA', 'MID-TIER GRIND', 'OLIGARCH MODE'];
+    const levelText = `Level ${config.levelNumber} - ${levelSubtitles[currentLevel]}`;
     drawTextScreen(
-        `Level ${config.levelNumber}`,
-        vec2(mainCanvasSize.x - 120, 100),  // Top-right area
-        32,
+        levelText,
+        vec2(mainCanvasSize.x - 120, 90),  // Top-right area
+        26,  // Slightly smaller to fit subtitle
         new Color(1, 1, 1),
         0,
         'right',
@@ -907,12 +948,22 @@ function gameRenderPost() {
         new Color(0, 0, 0)
     );
 
-    // Score display (top-right) - FR-015
+    // Score displays (top-right) - FR-015
     drawTextScreen(
-        `$${scoreFormatted}`,
-        vec2(mainCanvasSize.x - 120, 140),  // Below level indicator
+        `Level: $${levelScoreFormatted}`,
+        vec2(mainCanvasSize.x - 120, 130),
+        22,
+        new Color(1, 1, 1),
+        0,
+        'right',
+        'monospace',
+        new Color(0, 0, 0)
+    );
+    drawTextScreen(
+        `Total: $${totalScoreFormatted}`,
+        vec2(mainCanvasSize.x - 120, 160),
         24,
-        new Color(1, 1, 0),       // Yellow
+        new Color(1, 1, 0),       // Yellow highlight for total
         0,
         'right',
         'monospace',
@@ -1049,19 +1100,36 @@ function formatTime(seconds) {
 }
 
 // Initialize a level (US1 T008-T010)
-function startLevel(levelIndex) {
+function startLevel(levelIndex, options = {}) {
+    const {
+        preservePlayerSize = false,
+        carryForwardScore = false
+    } = options;
+
     currentLevel = levelIndex;
     const config = LEVEL_CONFIG[currentLevel];
 
     // Reset player to starting state (T008)
     if (!player) {
         player = new PlayerBall(vec2(0, 0));
-    } else {
-        player.pos = vec2(0, 0);
-        player.size = vec2(config.startingPlayerSize);
-        player.velocity = vec2(0, 0);
+    }
+
+    if (player) {
+        // Roll back level earnings when retrying the same level
+        if (!carryForwardScore && player.score) {
+            player.totalScore = Math.max(0, player.totalScore - player.score);
+        }
+
         player.score = 0;
-        player.mass = config.startingPlayerSize * config.startingPlayerSize;
+
+        const targetSize = preservePlayerSize
+            ? Math.max(player.size.x, config.startingPlayerSize)
+            : config.startingPlayerSize;
+
+        player.size = vec2(targetSize, targetSize);
+        player.mass = targetSize * targetSize;
+        player.pos = vec2(0, 0);
+        player.velocity = vec2(0, 0);
     }
 
     // Clear old collectibles (T024)
@@ -1094,7 +1162,10 @@ function handleTransition() {
     if (levelState === STATE.VICTORY) {
         // Victory: advance to next level or complete game (T011)
         if (currentLevel < LEVEL_CONFIG.length - 1) {
-            startLevel(currentLevel + 1);
+            startLevel(currentLevel + 1, {
+                preservePlayerSize: true,
+                carryForwardScore: true
+            });
         } else {
             // Game complete (beat all 3 levels)
             levelState = STATE.GAME_COMPLETE;
@@ -1102,7 +1173,10 @@ function handleTransition() {
         }
     } else if (levelState === STATE.DEFEAT) {
         // Defeat: retry same level (T017)
-        startLevel(currentLevel);
+        startLevel(currentLevel, {
+            preservePlayerSize: false,
+            carryForwardScore: false
+        });
     }
 }
 
@@ -1122,7 +1196,26 @@ function spawnCollectiblesForLevel(config) {
     const playAreaHalfSize = config.playAreaSize / 2;
 
     let spawned = 0;
-    const playerStartSize = config.startingPlayerSize; // 0.5
+    const playerReferenceSize = player ? player.size.x : config.startingPlayerSize;
+
+    let objectsForLevel = Object.entries(COLLECTIBLE_DATA)
+        .filter(([, data]) => data.level === config.levelNumber);
+
+    if (!objectsForLevel.length) {
+        console.warn(`No collectibles tagged for level ${config.levelNumber}; falling back to full pool.`);
+        objectsForLevel = Object.entries(COLLECTIBLE_DATA);
+    }
+
+    const smallPool = objectsForLevel.filter(([, data]) => data.sizeRange[1] <= playerReferenceSize * 0.9);
+    const mediumPool = objectsForLevel.filter(([, data]) =>
+        data.sizeRange[0] < config.targetSize * 0.6 && data.sizeRange[1] > playerReferenceSize * 0.5
+    );
+    const largePool = objectsForLevel.filter(([, data]) => data.sizeRange[0] >= config.targetSize * 0.6);
+
+    const chooseFromPool = (pool) => {
+        const source = pool.length ? pool : objectsForLevel;
+        return source[Math.floor(Math.random() * source.length)];
+    };
 
     for (let i = 0; i < spawnCount; i++) {
         // Grid cell coordinates
@@ -1138,30 +1231,31 @@ function spawnCollectiblesForLevel(config) {
         const offsetY = (Math.random() - 0.5) * cellSize * 0.8;
         const spawnPos = vec2(cellCenterX + offsetX, cellCenterY + offsetY);
 
-        // FIXED: Progressive size distribution to ensure winnable gameplay
         // Create size tiers: 40% small (immediately collectable), 40% medium, 20% large
         const tier = Math.random();
-        let size;
+        let entry;
         if (tier < 0.4) {
-            // Small tier: Always collectable by starting player (0.3 to 0.45)
-            size = playerStartSize * 0.6 + Math.random() * playerStartSize * 0.3;
+            entry = chooseFromPool(smallPool);
         } else if (tier < 0.8) {
-            // Medium tier: Collectable after some growth (0.5 to targetSize * 0.4)
-            const midPoint = (playerStartSize + config.targetSize) / 2;
-            size = playerStartSize + Math.random() * (midPoint - playerStartSize);
+            entry = chooseFromPool(mediumPool);
         } else {
-            // Large tier: Collectable near end (targetSize * 0.4 to targetSize * 0.9)
-            size = config.targetSize * 0.4 + Math.random() * config.targetSize * 0.5;
+            entry = chooseFromPool(largePool);
         }
 
-        // Clamp to config range
-        size = Math.max(config.collectibleSizeMin, Math.min(config.collectibleSizeMax, size));
+        const [type, data] = entry;
+        const [minSize, maxSize] = data.sizeRange;
+        const span = Math.max(0, maxSize - minSize);
 
-        // Feature 006: Select random object type from all 20 objects (FR-006-001, T005)
-        // Get all object keys and pick one at random
-        const objectKeys = Object.keys(COLLECTIBLE_DATA);
-        const randomIndex = Math.floor(Math.random() * objectKeys.length);
-        const type = objectKeys[randomIndex];
+        let sizeRatio = Math.random();
+        if (tier < 0.4) {
+            sizeRatio *= 0.4;
+        } else if (tier < 0.8) {
+            sizeRatio = 0.3 + sizeRatio * 0.4;
+        } else {
+            sizeRatio = 0.7 + sizeRatio * 0.3;
+        }
+
+        const size = span ? minSize + span * clamp(sizeRatio, 0, 1) : minSize;
 
         // Boundary check: ensure collectible fits within play area
         const halfSize = size / 2;
@@ -1286,7 +1380,10 @@ class PlayerBall extends EngineObject {
         super(pos, vec2(0.5, 0.5));  // Start at smallest size (FR-001)
         this.mass = 0.25;              // Area: 0.5 × 0.5
         this.damping = 0.5;            // 50% velocity retained (much faster stopping)
-        this.score = 0;
+        this.score = 0;                // Level earnings
+        this.totalScore = 0;           // Cumulative earnings across levels
+        this.biggestCollectedValue = 0;  // Feature 007: Track highest value object (FR-007-020)
+        this.biggestCollectedName = '';  // Feature 007: Track object name for "Biggest W" stat
         this.color = new Color(1, 0.8, 0);  // Golden yellow
         this.collideTiles = false;     // Free movement, no tile collision
         this.collideSolidObjects = true;  // Enable collision with other objects
@@ -1339,6 +1436,14 @@ class PlayerBall extends EngineObject {
     collect(collectible) {
         // Add score (FR-010)
         this.score += collectible.value;
+        this.totalScore += collectible.value;
+
+        // Feature 007: Track biggest collected object (FR-007-020, FR-007-021)
+        if (collectible.value > this.biggestCollectedValue) {
+            this.biggestCollectedValue = collectible.value;
+            const objectData = COLLECTIBLE_DATA[collectible.type];
+            this.biggestCollectedName = objectData ? objectData.name : collectible.type.toUpperCase();
+        }
 
         // Exponential size growth (FR-011, from research.md R1)
         const growthAmount = (collectible.value / 200) * this.size.x;
