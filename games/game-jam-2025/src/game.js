@@ -1474,20 +1474,9 @@ class PlayerBall extends EngineObject {
         // Parent update handles physics and damping (FR-005)
         super.update();
 
-        // Manual collision check (LittleJS auto-collision might not trigger)
-        engineObjects.forEach(obj => {
-            if (obj instanceof Collectible && !obj.destroyed) {
-                const dist = this.pos.distance(obj.pos);
-                const minDist = (this.size.x + obj.size.x) / 2;
-
-                if (dist < minDist) {
-                    // Collision detected! Check size and collect
-                    if (this.size.x > obj.size.x) {
-                        this.collect(obj);
-                    }
-                }
-            }
-        });
+        // PERFORMANCE: Remove manual collision check - rely on collideWithObject() callback
+        // Manual loop was causing lag (40-80 distance calculations per frame!)
+        // LittleJS's built-in collision system handles this efficiently
     }
 
     collideWithObject(other) {
