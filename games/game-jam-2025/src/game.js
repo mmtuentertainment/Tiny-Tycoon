@@ -1515,12 +1515,14 @@ class PlayerBall extends EngineObject {
         }
 
         // Feature 005: Particle burst on collection (FR-005-001, FR-005-002)
-        spawnCollectionParticles(collectible.pos, collectible.value);
+        // PERFORMANCE TEST: Temporarily disabled to diagnose lag
+        // spawnCollectionParticles(collectible.pos, collectible.value);
 
         // Feature 004: Collection sound (FR-004-003, FR-004-004, T007)
-        if (soundManager) {
-            soundManager.playCollect(collectible.pos, collectible.value);
-        }
+        // PERFORMANCE TEST: Temporarily disabled to diagnose lag
+        // if (soundManager) {
+        //     soundManager.playCollect(collectible.pos, collectible.value);
+        // }
 
         // Feature 003: Value-scaled screen shake (FR-030-001, FR-030-002, FR-030-003)
         const shakePower = SHAKE_BASE + (collectible.value * SHAKE_VALUE_MULTIPLIER);
