@@ -1466,29 +1466,8 @@ class PlayerBall extends EngineObject {
         // Parent update handles physics and damping (FR-005)
         super.update();
 
-        // PERFORMANCE: Ultra-tight collision check - only immediate vicinity
-        // Fixed radius (not size-based!) to prevent lag growth at large sizes
-        const checkRadius = 5;  // Fixed 5 units regardless of player size
-
-        for (let i = 0; i < engineObjects.length; i++) {
-            const obj = engineObjects[i];
-            if (obj instanceof Collectible && !obj.destroyed) {
-                // Quick distance check (spatial culling)
-                const dx = Math.abs(this.pos.x - obj.pos.x);
-                const dy = Math.abs(this.pos.y - obj.pos.y);
-
-                // Skip if too far (Manhattan distance approximation - faster than sqrt)
-                if (dx > checkRadius || dy > checkRadius) continue;
-
-                // Precise distance check only for nearby objects
-                const dist = this.pos.distance(obj.pos);
-                const minDist = (this.size.x + obj.size.x) / 2;
-
-                if (dist < minDist && this.size.x > obj.size.x) {
-                    this.collect(obj);
-                }
-            }
-        }
+        // PERFORMANCE: NO manual collision loop - rely ONLY on collideWithObject()
+        // Any manual loop (even with culling) causes lag with 40-80 objects
     }
 
     collideWithObject(other) {
