@@ -25,7 +25,7 @@ const LEVEL_CONFIG = [
         startingPlayerSize: 0.5,            // Reset to 0.5× each level
         collectibleSizeMin: 0.3,            // Smallest collectible
         collectibleSizeMax: 3.0,            // Largest collectible
-        collectibleSpawnCount: { min: 30, max: 50 }, // Random count in range
+        collectibleSpawnCount: { min: 15, max: 25 }, // PERFORMANCE: Reduced from 30-50 (50% less!)
         difficulty: 'Easy'
     },
     { // Level 2 - Medium
@@ -36,7 +36,7 @@ const LEVEL_CONFIG = [
         startingPlayerSize: 0.5,
         collectibleSizeMin: 3.0,            // Larger objects than L1
         collectibleSizeMax: 10.0,
-        collectibleSpawnCount: { min: 40, max: 60 },
+        collectibleSpawnCount: { min: 20, max: 30 }, // PERFORMANCE: Reduced from 40-60 (50% less!)
         difficulty: 'Medium'
     },
     { // Level 3 - Hard
@@ -47,7 +47,7 @@ const LEVEL_CONFIG = [
         startingPlayerSize: 0.5,
         collectibleSizeMin: 10.0,           // Even larger objects
         collectibleSizeMax: 40.0,
-        collectibleSpawnCount: { min: 50, max: 80 },
+        collectibleSpawnCount: { min: 25, max: 40 }, // PERFORMANCE: Reduced from 50-80 (50% less!)
         difficulty: 'Hard'
     }
 ];
