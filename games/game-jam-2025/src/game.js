@@ -1490,6 +1490,10 @@ class PlayerBall extends EngineObject {
     }
 
     collect(collectible) {
+        // Get object data for name display
+        const objectData = COLLECTIBLE_DATA[collectible.type];
+        const objectName = objectData ? objectData.name : collectible.type.toUpperCase();
+
         // Add score (FR-010)
         this.score += collectible.value;
         this.totalScore += collectible.value;
@@ -1497,14 +1501,13 @@ class PlayerBall extends EngineObject {
         // Feature 007: Track biggest collected object (FR-007-020, FR-007-021)
         if (collectible.value > this.biggestCollectedValue) {
             this.biggestCollectedValue = collectible.value;
-            const objectData = COLLECTIBLE_DATA[collectible.type];
-            this.biggestCollectedName = objectData ? objectData.name : collectible.type.toUpperCase();
+            this.biggestCollectedName = objectName;
         }
 
         // Exponential size growth (FR-011, from research.md R1)
         // BUGFIX: Growth based on OBJECT SIZE, not value (ensures visible growth from small objects)
         const growthAmount = collectible.size.x * 0.15;  // Grow by 15% of collected object's size
-        console.log(`Collected ${objectData ? objectData.name : collectible.type} (size ${collectible.size.x.toFixed(2)}) → growth: ${growthAmount.toFixed(3)}, new size: ${(this.size.x + growthAmount).toFixed(2)}`);
+        console.log(`Collected ${objectName} (size ${collectible.size.x.toFixed(2)}) → growth: ${growthAmount.toFixed(3)}, new size: ${(this.size.x + growthAmount).toFixed(2)}`);
         this.size = this.size.add(vec2(growthAmount, growthAmount));
 
         // Update mass to match new size (area-based for momentum)
