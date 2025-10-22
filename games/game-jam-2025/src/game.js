@@ -558,6 +558,21 @@ function gameInit() {
         },
 
         // === LEVEL 2: URBAN/DOWNTOWN (7 objects) ===
+        // Add some smaller starter objects for Level 2
+        pennyL2: {
+            name: 'PENNY',
+            value: 1,
+            level: 2,
+            sizeRange: [0.3, 0.35],
+            color: new Color(0.8, 0.5, 0.2)  // Copper
+        },
+        gumL2: {
+            name: 'GUM',
+            value: 10,
+            level: 2,
+            sizeRange: [0.35, 0.4],
+            color: new Color(1, 0.4, 0.6)    // Pink
+        },
         coffee: {
             name: 'COFFEE',
             value: 100,
@@ -609,6 +624,28 @@ function gameInit() {
         },
 
         // === LEVEL 3: LUXURY/OLIGARCH (5 objects) ===
+        // Add smaller starter objects for Level 3
+        coffeeL3: {
+            name: 'COFFEE',
+            value: 100,
+            level: 3,
+            sizeRange: [0.6, 0.7],
+            color: new Color(0.4, 0.2, 0.1)  // Coffee brown
+        },
+        bicycleL3: {
+            name: 'BICYCLE',
+            value: 500,
+            level: 3,
+            sizeRange: [1.0, 1.3],
+            color: new Color(0.8, 0, 0)      // Red
+        },
+        carL3: {
+            name: 'CAR',
+            value: 5000,
+            level: 3,
+            sizeRange: [1.5, 2.0],
+            color: new Color(0.1, 0.3, 0.6)  // Blue car
+        },
         yacht: {
             name: 'YACHT',
             value: 500000,
@@ -1151,14 +1188,18 @@ function startLevel(levelIndex, options = {}) {
     // Spawn new collectibles for this level (T025)
     spawnCollectiblesForLevel(config);
 
-    // Reset timer (T009)
-    levelStartTime = time;
-    remainingTime = config.timeLimit;
-
-    // Set state to playing (T010)
+    // Set state to playing FIRST (T010)
     levelState = STATE.PLAYING;
 
+    // BUGFIX: Start timer on NEXT frame (not immediately) to prevent black screen time loss
+    // Use setTimeout to delay timer start by 1 frame (~16ms)
+    setTimeout(() => {
+        levelStartTime = time;
+        remainingTime = config.timeLimit;
+    }, 100);  // 100ms delay ensures first frame renders before timer starts
+
     console.log(`Level ${config.levelNumber} started - Target: ${config.targetSize}x, Time: ${config.timeLimit}s`);
+    console.log(`  Player actual size: ${player.size.x.toFixed(2)} units`);
 }
 
 // Handle transition between levels (US1 T011, US2 T017)
@@ -1166,8 +1207,9 @@ function handleTransition() {
     if (levelState === STATE.VICTORY) {
         // Victory: advance to next level or complete game (T011)
         if (currentLevel < LEVEL_CONFIG.length - 1) {
+            // BUGFIX: Reset player size each level so objects are collectable
             startLevel(currentLevel + 1, {
-                preservePlayerSize: true,
+                preservePlayerSize: false,  // Reset to 0.5 each level
                 carryForwardScore: true
             });
         } else {
@@ -1279,6 +1321,8 @@ function spawnCollectiblesForLevel(config) {
     }
 
     console.log(`Level ${config.levelNumber}: Spawned ${spawned} collectibles with progressive sizing`);
+    console.log(`  Player size: ${playerReferenceSize.toFixed(2)}, Target: ${config.targetSize}`);
+    console.log(`  Small pool: ${smallPool.length}, Medium: ${mediumPool.length}, Large: ${largePool.length}`);
 }
 
 // Legacy spawn function (Feature 001 - will be removed after full migration)
