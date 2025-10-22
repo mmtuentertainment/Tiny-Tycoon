@@ -1122,6 +1122,10 @@ function startLevel(levelIndex, options = {}) {
 
         player.score = 0;
 
+        // Feature 007: Reset "Biggest W" tracking for new level
+        player.biggestCollectedValue = 0;
+        player.biggestCollectedName = '';
+
         const targetSize = preservePlayerSize
             ? Math.max(player.size.x, config.startingPlayerSize)
             : config.startingPlayerSize;
@@ -1206,11 +1210,15 @@ function spawnCollectiblesForLevel(config) {
         objectsForLevel = Object.entries(COLLECTIBLE_DATA);
     }
 
-    const smallPool = objectsForLevel.filter(([, data]) => data.sizeRange[1] <= playerReferenceSize * 0.9);
+    // BUGFIX: Create pools based on COLLECTIBLE vs PLAYER size for winnable levels
+    // Small pool: Objects player can IMMEDIATELY collect (smaller than current player size)
+    const smallPool = objectsForLevel.filter(([, data]) => data.sizeRange[0] < playerReferenceSize * 0.8);
+    // Medium pool: Objects player can collect after moderate growth
     const mediumPool = objectsForLevel.filter(([, data]) =>
-        data.sizeRange[0] < config.targetSize * 0.6 && data.sizeRange[1] > playerReferenceSize * 0.5
+        data.sizeRange[0] >= playerReferenceSize * 0.8 && data.sizeRange[1] < config.targetSize * 0.7
     );
-    const largePool = objectsForLevel.filter(([, data]) => data.sizeRange[0] >= config.targetSize * 0.6);
+    // Large pool: Objects player can collect when near victory
+    const largePool = objectsForLevel.filter(([, data]) => data.sizeRange[0] >= config.targetSize * 0.5);
 
     const chooseFromPool = (pool) => {
         const source = pool.length ? pool : objectsForLevel;
@@ -1246,13 +1254,17 @@ function spawnCollectiblesForLevel(config) {
         const [minSize, maxSize] = data.sizeRange;
         const span = Math.max(0, maxSize - minSize);
 
-        let sizeRatio = Math.random();
+        // BUGFIX: Spawn sizes that are actually collectable
+        // Small tier (40%): Spawn at MINIMUM of range (immediately collectable)
+        // Medium tier (40%): Spawn in middle of range (moderate growth needed)
+        // Large tier (20%): Spawn near maximum of range (near-victory needed)
+        let sizeRatio;
         if (tier < 0.4) {
-            sizeRatio *= 0.4;
+            sizeRatio = Math.random() * 0.2;  // 0-20% of range (near minimum)
         } else if (tier < 0.8) {
-            sizeRatio = 0.3 + sizeRatio * 0.4;
+            sizeRatio = 0.4 + Math.random() * 0.3;  // 40-70% of range (middle)
         } else {
-            sizeRatio = 0.7 + sizeRatio * 0.3;
+            sizeRatio = 0.7 + Math.random() * 0.3;  // 70-100% of range (near maximum)
         }
 
         const size = span ? minSize + span * clamp(sizeRatio, 0, 1) : minSize;
