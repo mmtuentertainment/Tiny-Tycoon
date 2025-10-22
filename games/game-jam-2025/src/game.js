@@ -573,12 +573,33 @@ function gameInit() {
             sizeRange: [0.35, 0.4],
             color: new Color(1, 0.4, 0.6)    // Pink
         },
+        backpackL2: {
+            name: 'BACKPACK',
+            value: 75,
+            level: 2,
+            sizeRange: [0.5, 0.6],
+            color: new Color(0.3, 0.3, 0.8)  // Blue
+        },
+        basketball: {
+            name: 'BASKETBALL',
+            value: 100,
+            level: 2,
+            sizeRange: [0.55, 0.65],
+            color: new Color(1, 0.5, 0)      // Orange
+        },
         coffee: {
             name: 'COFFEE',
             value: 100,
             level: 2,
             sizeRange: [0.6, 0.7],
             color: new Color(0.4, 0.2, 0.1)  // Coffee brown
+        },
+        desk: {
+            name: 'DESK',
+            value: 200,
+            level: 2,
+            sizeRange: [0.7, 0.9],
+            color: new Color(0.6, 0.4, 0.2)  // Brown wood
         },
         officeChair: {
             name: 'OFFICE CHAIR',
@@ -1445,9 +1466,9 @@ class PlayerBall extends EngineObject {
         // Parent update handles physics and damping (FR-005)
         super.update();
 
-        // PERFORMANCE: Optimized collision check - only check nearby objects
-        // Use spatial culling to reduce checks from 80 to ~5-10
-        const checkRadius = this.size.x * 3;  // Only check objects within 3x player size
+        // PERFORMANCE: Ultra-tight collision check - only immediate vicinity
+        // Fixed radius (not size-based!) to prevent lag growth at large sizes
+        const checkRadius = 5;  // Fixed 5 units regardless of player size
 
         for (let i = 0; i < engineObjects.length; i++) {
             const obj = engineObjects[i];
