@@ -1094,8 +1094,8 @@ function spawnTierUpParticles(pos) {
  * @param {number} value - Object value (determines particle count)
  */
 function spawnCollectionParticles(pos, value) {
-    // Calculate particle count using logarithmic formula (FR-005-002-CLARIFIED)
-    const baseCount = Math.floor(10 + Math.log10(value + 1) * 15);
+    // PERFORMANCE FIX: Drastically reduce particle count to prevent lag
+    const baseCount = Math.floor(3 + Math.log10(value + 1) * 2);  // Was 10+log*15, now 3+log*2
     const particleCount = Math.floor(baseCount * emissionMultiplier);
 
     if (particleCount < 1) return; // Skip if LOD too aggressive
@@ -1511,9 +1511,6 @@ class PlayerBall extends EngineObject {
 
         // Feature 006: Show collection popup (FR-006-003, T004)
         if (popupTextManager) {
-            // Get object data to access name field
-            const objectData = COLLECTIBLE_DATA[collectible.type];
-            const objectName = objectData ? objectData.name : collectible.type.toUpperCase();
             popupTextManager.showCollection(objectName, collectible.value, collectible.pos);
         }
 
