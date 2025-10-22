@@ -656,7 +656,17 @@ git add .
 git commit -m "feat: descriptive message"
 git push origin 00X-feature-name
 
-# 7. END OF SESSION - Update status
+# 7. DEPLOY TO PRODUCTION (merge to master)
+git checkout master
+git merge 00X-feature-name
+# Resolve conflicts if needed (see Vercel Deployment Workflow section)
+git push origin master  # ← Triggers Vercel auto-deploy!
+
+# 8. TEST ON LIVE URL
+# Wait 30-60 seconds, then visit: https://game-jam-2025.vercel.app
+# Hard refresh browser: Ctrl+Shift+R (or Cmd+Shift+R on Mac)
+
+# 9. END OF SESSION - Update status
 # Update constitution.md Section 15.2 if major milestone reached
 ```
 
@@ -719,25 +729,37 @@ git push origin master
 
 ### Vercel Deployment Workflow
 
-**Automatic Deployment**: Every push to GitHub triggers Vercel deployment
+**IMPORTANT**: Vercel auto-deploys ONLY from `master` branch!
+
+**Standard Workflow** (Feature Branch → Master → Auto-Deploy):
 
 ```bash
-# 1. Commit your changes
+# 1. Work on feature branch
+git checkout 00X-feature-name
 git add src/game.js
 git commit -m "feat: add new feature"
+git push origin 00X-feature-name  # Creates preview deployment (optional)
 
-# 2. Push to GitHub (triggers automatic Vercel deployment)
-git push origin 006-add-named-collectibles
+# 2. Merge to master (REQUIRED for production auto-deploy)
+git checkout master
+git merge 00X-feature-name
 
-# 3. Wait 15-30 seconds for deployment
+# If conflicts occur (common when master has skeleton):
+git checkout --theirs src/game.js .specify/ .claude/  # Take feature branch versions
+git add -A
+git commit -m "Merge branch '00X-feature-name'"
 
-# 4. Test live game
-# Primary URL: https://game-jam-2025.vercel.app
-# Preview URLs are created for each branch automatically
+# 3. Push to master (triggers AUTO-DEPLOY)
+git push origin master  # ← Vercel deploys automatically!
+
+# 4. Wait 30-60 seconds for deployment
+
+# 5. Test live game at production URL
+# https://game-jam-2025.vercel.app
 ```
 
 **Live Testing URLs**:
-- **Production**: https://game-jam-2025.vercel.app
+- **Production**: https://game-jam-2025.vercel.app (← Test here!)
 - **Alt 1**: https://game-jam-2025-matthew-utts-projects-89452c41.vercel.app
 - **Alt 2**: https://game-jam-2025-mmtuentertainment-matthew-utts-projects-89452c41.vercel.app
 
@@ -747,10 +769,29 @@ vercel ls  # List recent deployments
 vercel inspect [deployment-url]  # Check specific deployment
 ```
 
-**Manual Deploy** (if needed):
+**Manual Deploy** (if auto-deploy fails):
 ```bash
+git checkout master  # Ensure on master
 vercel --prod --yes  # Deploy to production immediately
 ```
+
+**Common Merge Conflicts Resolution**:
+```bash
+# When merging feature branch to master (skeleton conflicts):
+git checkout master
+git merge 00X-feature-name  # Conflicts appear
+
+# Resolve by taking feature branch version (our code, not skeleton):
+git checkout --theirs src/game.js          # Take our implementation
+git checkout --theirs .specify/            # Take our specs
+git checkout --theirs .claude/commands/    # Take our commands
+git checkout --theirs index.html build.js  # Take our build files
+git add -A
+git commit -m "Merge feature branch (resolved conflicts)"
+git push origin master  # Auto-deploys!
+```
+
+**Browser Cache**: Always hard refresh (Ctrl+Shift+R) after deployment to see changes!
 
 ### Testing Checklist
 
