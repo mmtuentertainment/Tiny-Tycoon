@@ -624,7 +624,21 @@ function gameInit() {
         },
 
         // === LEVEL 3: LUXURY/OLIGARCH (5 objects) ===
-        // Add smaller starter objects for Level 3
+        // Add smaller starter objects for Level 3 (must be < 0.4 to be in small pool!)
+        pennyL3: {
+            name: 'PENNY',
+            value: 1,
+            level: 3,
+            sizeRange: [0.3, 0.35],
+            color: new Color(0.8, 0.5, 0.2)  // Copper
+        },
+        gumL3: {
+            name: 'GUM',
+            value: 10,
+            level: 3,
+            sizeRange: [0.35, 0.4],
+            color: new Color(1, 0.4, 0.6)    // Pink
+        },
         coffeeL3: {
             name: 'COFFEE',
             value: 100,
@@ -1404,12 +1418,11 @@ class Collectible extends EngineObject {
             this.magnetActive = true;
 
             // Feature 005: Magnetic trail particles (FR-005-010-CLARIFIED)
-            // Only emit if player is 90%+ of collection threshold
+            // PERFORMANCE FIX: Reduce particle spam - only emit occasionally
             const sizeThreshold = this.size.x * 0.5; // 50% rule from FR-001
-            if (player.size.x >= sizeThreshold * 0.9) {
-                // Emit 1-2 trail particles per frame (random for variety)
-                const trailCount = Math.floor(1 + Math.random() * 2); // 1 or 2
-                spawnMagneticTrailParticles(this.pos, trailCount);
+            if (player.size.x >= sizeThreshold * 0.9 && Math.random() < 0.1) {  // Only 10% of frames
+                // Emit 1 particle (reduced from 1-2)
+                spawnMagneticTrailParticles(this.pos, 1);
             }
         } else {
             this.magnetActive = false;
