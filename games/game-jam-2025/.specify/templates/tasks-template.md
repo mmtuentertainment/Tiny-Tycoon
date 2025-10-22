@@ -11,15 +11,6 @@ description: "Task list template for feature implementation"
 
 **Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
 
-**Physics Testing (LittleJS Games)**: For game projects with physics mechanics, include physics-specific tests:
-
-- Test physics behaviors before implementation (TDD - Article II of constitution)
-- Validate collision detection accuracy
-- Verify force application and velocity calculations
-- Test edge cases (zero gravity, extreme forces, boundary conditions)
-- Document expected vs. actual physics behavior
-- All physics tests must pass before gameplay implementation
-
 ## Format: `[ID] [P?] [Story] Description`
 - **[P]**: Can run in parallel (different files, no dependencies)
 - **[Story]**: Which user story this task belongs to (e.g., US1, US2, US3)
@@ -29,7 +20,6 @@ description: "Task list template for feature implementation"
 - **Single project**: `src/`, `tests/` at repository root
 - **Web app**: `backend/src/`, `frontend/src/`
 - **Mobile**: `api/src/`, `ios/src/` or `android/src/`
-- **LittleJS Game**: `src/` (game.js, objects/, levels/), `assets/` (sprites.png), `tests/` (physics.test.js, gameplay.test.js)
 - Paths shown below assume single project - adjust based on plan.md structure
 
 <!-- 
@@ -256,5 +246,6 @@ With multiple developers:
 - Commit after each task or logical group
 - Stop at any checkpoint to validate story independently
 - Avoid: vague tasks, same file conflicts, cross-story dependencies that break independence
+
 
 

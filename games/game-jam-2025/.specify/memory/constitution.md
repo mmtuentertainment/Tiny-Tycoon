@@ -1,5 +1,22 @@
 # Tiny Tycoon Constitution
 
+<!--
+╔════════════════════════════════════════════════════════════════════════════╗
+║ ⚠️  PROJECT-OWNED FILE - DO NOT OVERWRITE WITH GENERIC TEMPLATE          ║
+║                                                                            ║
+║ This file contains 2,447 lines of Tiny Tycoon-specific requirements,      ║
+║ including 60 Functional Requirements (FR-001 to FR-060), complete game    ║
+║ design, data structures, and technical specifications.                    ║
+║                                                                            ║
+║ If updating via Spec-Kit workflow:                                        ║
+║ • Run commands FROM games/game-jam-2025/ directory (not workspace root)   ║
+║ • Use merge/append operations, NOT blind overwrites                       ║
+║ • Backup before ANY automated changes                                     ║
+║                                                                            ║
+║ Last Verified: 2025-10-22 | Lines: 2447 | Status: Production-Ready       ║
+╚════════════════════════════════════════════════════════════════════════════╝
+-->
+
 > **Katamari-Style Business Growth Game for LittleJS Game Jam 2025**
 >
 > **Theme**: "SMALL" | **Ship Date**: November 3, 2025 | **Status**: Production-Ready
