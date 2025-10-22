@@ -1,0 +1,35 @@
+[536620:536740:1020/090629.076236:ERROR:dbus/object_proxy.cc:590] Failed to call method: org.freedesktop.DBus.Properties.Get: object_path= /org/freedesktop/UPower: org.freedesktop.DBus.Error.ServiceUnknown: The name org.freedesktop.UPower was not provided by any .service files
+[536620:536740:1020/090629.076984:ERROR:dbus/object_proxy.cc:590] Failed to call method: org.freedesktop.UPower.GetDisplayDevice: object_path= /org/freedesktop/UPower: org.freedesktop.DBus.Error.ServiceUnknown: The name org.freedesktop.UPower was not provided by any .service files
+[536620:536740:1020/090629.077656:ERROR:dbus/object_proxy.cc:590] Failed to call method: org.freedesktop.UPower.EnumerateDevices: object_path= /org/freedesktop/UPower: org.freedesktop.DBus.Error.ServiceUnknown: The name org.freedesktop.UPower was not provided by any .service files
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1760965595.132073  536655 voice_transcription.cc:58] Registering VoiceTranscriptionCapability
+Created TensorFlow Lite XNNPACK delegate for CPU.
+Attempting to use a delegate that only supports static-sized tensors with a graph that has dynamic-sized tensors (tensor#-1 is a dynamic-sized tensor).
+[536620:536650:1020/090635.206258:ERROR:google_apis/gcm/engine/registration_request.cc:291] Registration response error message: DEPRECATED_ENDPOINT
+[536620:536650:1020/090658.589587:ERROR:google_apis/gcm/engine/registration_request.cc:291] Registration response error message: DEPRECATED_ENDPOINT
+[536620:536650:1020/090749.922196:ERROR:google_apis/gcm/engine/registration_request.cc:291] Registration response error message: DEPRECATED_ENDPOINT
+[536620:536650:1020/090927.329014:ERROR:google_apis/gcm/engine/registration_request.cc:291] Registration response error message: DEPRECATED_ENDPOINT
+[536620:536650:1020/091220.342476:ERROR:google_apis/gcm/engine/registration_request.cc:291] Registration response error message: DEPRECATED_ENDPOINT
+[536620:536650:1020/091839.727474:ERROR:google_apis/gcm/engine/registration_request.cc:291] Registration response error message: DEPRECATED_ENDPOINT
+[536620:536620:1020/092535.562279:ERROR:content/common/zygote/zygote_communication_linux.cc:296] Failed to send GetTerminationStatus message to zygote
+[536620:536620:1020/092535.562764:ERROR:content/common/zygote/zygote_communication_linux.cc:296] Failed to send GetTerminationStatus message to zygote
+[536620:536620:1020/092535.566029:ERROR:content/common/zygote/zygote_communication_linux.cc:296] Failed to send GetTerminationStatus message to zygote
+[536620:536650:1020/092535.567562:ERROR:google_apis/gcm/engine/connection_factory_impl.cc:483] ConnectionHandler failed with net error: -2
+[536620:536620:1020/092535.569802:ERROR:content/common/zygote/zygote_communication_linux.cc:296] Failed to send GetTerminationStatus message to zygote
+[536620:536620:1020/092535.571961:ERROR:content/browser/network_service_instance_impl.cc:597] Network service crashed, restarting service.
+[536620:536620:1020/092535.580026:ERROR:content/common/zygote/zygote_communication_linux.cc:296] Failed to send GetTerminationStatus message to zygote
+[536620:536620:1020/092535.629921:ERROR:gpu/ipc/client/command_buffer_proxy_impl.cc:326] GPU state invalid after WaitForGetOffsetInRange.
+[536620:536620:1020/092535.641167:ERROR:content/common/zygote/zygote_communication_linux.cc:296] Failed to send GetTerminationStatus message to zygote
+[536620:536620:1020/092535.645412:ERROR:content/browser/gpu/gpu_process_host.cc:953] GPU process launch failed: error_code=1002
+[536620:536620:1020/092535.646870:ERROR:content/browser/gpu/gpu_process_host.cc:953] GPU process launch failed: error_code=1002
+[536620:536620:1020/092535.647856:ERROR:content/browser/gpu/gpu_process_host.cc:953] GPU process launch failed: error_code=1002
+[536620:536620:1020/092535.648713:ERROR:content/browser/gpu/gpu_process_host.cc:953] GPU process launch failed: error_code=1002
+[536620:536620:1020/092535.649542:ERROR:content/browser/gpu/gpu_process_host.cc:953] GPU process launch failed: error_code=1002
+[536620:536620:1020/092535.650473:ERROR:content/browser/gpu/gpu_process_host.cc:953] GPU process launch failed: error_code=1002
+[536620:536620:1020/092535.651420:ERROR:content/browser/gpu/gpu_process_host.cc:953] GPU process launch failed: error_code=1002
+[536620:536620:1020/092535.652317:ERROR:content/browser/gpu/gpu_process_host.cc:953] GPU process launch failed: error_code=1002
+[536620:536620:1020/092535.653192:ERROR:content/browser/gpu/gpu_process_host.cc:953] GPU process launch failed: error_code=1002
+[536620:536620:1020/092535.653229:FATAL:content/browser/gpu/gpu_data_manager_impl_private.cc:415] GPU process isn't usable. Goodbye.
+[1020/092535.667416:ERROR:third_party/crashpad/crashpad/util/file/file_io_posix.cc:145] open /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq: No such file or directory (2)
+[1020/092535.667493:ERROR:third_party/crashpad/crashpad/util/file/file_io_posix.cc:145] open /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq: No such file or directory (2)
+[1020/092535.671921:ERROR:third_party/crashpad/crashpad/util/file/directory_reader_posix.cc:43] opendir /home/matt/.config/google-chrome/Crash Reports/attachments/4414025b-27ba-407a-9277-263227abbe13: No such file or directory (2)

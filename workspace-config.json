@@ -1,0 +1,216 @@
+{
+  "version": "1.0.0",
+  "workspace": "LittleJS Game Development",
+  "created": "2025-10-13",
+  "environment": "WSL2 Ubuntu 22.04",
+
+  "paths": {
+    "root": "/home/matt/Game Development",
+    "windowsRoot": "\\\\wsl.localhost\\Ubuntu-22.04\\home\\matt\\Game Development",
+    "littlejs": "./LittleJS",
+    "specKit": "./spec-kit",
+    "knowledgeBase": "./knowledge-base",
+    "shared": "./shared",
+    "prototypes": "./prototypes",
+    "games": "./games",
+    "tools": "./tools",
+    "docs": "./docs"
+  },
+
+  "settings": {
+    "defaultAIAgent": "claude",
+    "specKitEnabled": true,
+    "autoInitSpecKit": true,
+    "physics": {
+      "targetPrize": true,
+      "innovationFocus": true,
+      "educationalGoal": true
+    },
+    "gameJam": {
+      "name": "LittleJS Game Jam 2025",
+      "theme": "SMALL",
+      "startDate": "2025-10-03",
+      "endDate": "2025-11-03",
+      "duration": 31,
+      "prizes": {
+        "cashPrize": 100,
+        "charityPhysicsPrize": 100,
+        "totalValue": "200+"
+      }
+    }
+  },
+
+  "templates": {
+    "gameSpec": ".specify/templates/spec-template.md",
+    "gamePlan": ".specify/templates/plan-template.md",
+    "gameTasks": ".specify/templates/tasks-template.md"
+  },
+
+  "shared": {
+    "components": [
+      "physics-helpers.js",
+      "particle-presets.js",
+      "ui-components.js"
+    ],
+    "assets": {
+      "tilesets": "shared/assets/tilesets/",
+      "fonts": "shared/assets/fonts/",
+      "audio": "shared/assets/audio/"
+    },
+    "tools": [
+      "game-initializer.sh"
+    ]
+  },
+
+  "games": {
+    "structure": {
+      "required": [
+        "src/",
+        "assets/",
+        "tests/",
+        ".specify/",
+        "index.html",
+        "package.json",
+        "README.md"
+      ],
+      "optional": [
+        "dist/",
+        "docs/"
+      ]
+    },
+    "conventions": {
+      "entryPoint": "src/game.js",
+      "spriteSheet": "assets/sprites.png",
+      "testDirectory": "tests/",
+      "buildOutput": "dist/"
+    }
+  },
+
+  "development": {
+    "workflow": [
+      "/speckit.constitution",
+      "/speckit.specify",
+      "/speckit.clarify",
+      "/speckit.plan",
+      "/speckit.tasks",
+      "/speckit.implement"
+    ],
+    "bestPractices": [
+      "Library-First: Each game is standalone project",
+      "Test-First: All physics mechanics have tests",
+      "Physics Innovation: Target $100 charity prize",
+      "SMALL Theme: All games embody theme",
+      "Simplicity: Max 3 specs per game initially",
+      "AI-Assisted: Leverage Claude Code with Spec Kit",
+      "Iterative: Prototype → Test → Refine"
+    ]
+  },
+
+  "constitution": {
+    "location": ".specify/memory/constitution.md",
+    "principles": [
+      "Library-First Development (Article I)",
+      "Test-First Development (Article III)",
+      "Simplicity (Article VII)",
+      "Anti-Abstraction (Article VIII)"
+    ]
+  },
+
+  "tools": {
+    "gameInitializer": {
+      "path": "tools/game-initializer.sh",
+      "usage": "./tools/game-initializer.sh <game-name>",
+      "description": "Creates new game project with Spec Kit integration"
+    }
+  },
+
+  "resources": {
+    "knowledgeBase": {
+      "location": "knowledge-base/",
+      "size": "4383+ lines",
+      "sections": [
+        "01-littlejs/",
+        "02-spec-kit/",
+        "03-game-jam/",
+        "04-integration/",
+        "05-quick-reference/"
+      ]
+    },
+    "documentation": {
+      "setupPlan": "DIRECTORY-SETUP-PLAN.md",
+      "quickStart": "QUICK-START.md",
+      "wsl2Integration": "WSL2-CLAUDE-INTEGRATION.md",
+      "mcpSetup": "docs/mcp-setup.md",
+      "devJournal": "docs/dev-journal.md",
+      "lessonsLearned": "docs/lessons-learned.md",
+      "physicsExperiments": "docs/physics-experiments.md",
+      "themeBrainstorm": "docs/theme-brainstorm.md"
+    }
+  },
+
+  "integrations": {
+    "claudeCode": {
+      "commandsPath": ".claude/commands/",
+      "commands": [
+        "speckit.constitution.md",
+        "speckit.specify.md",
+        "speckit.plan.md",
+        "speckit.tasks.md",
+        "speckit.implement.md",
+        "speckit.clarify.md",
+        "speckit.analyze.md",
+        "speckit.checklist.md"
+      ],
+      "workspaceWide": true
+    },
+    "specKit": {
+      "version": "0.0.19",
+      "templatesPath": ".specify/templates/",
+      "scriptsPath": ".specify/scripts/bash/",
+      "memoryPath": ".specify/memory/"
+    },
+    "littleJS": {
+      "repository": "https://github.com/KilledByAPixel/LittleJS.git",
+      "distPath": "LittleJS/dist/littlejs.min.js",
+      "version": "latest"
+    },
+    "mcp": {
+      "configFile": ".mcp.json",
+      "scope": "project",
+      "servers": {
+        "puppeteer": {
+          "status": "deprecated-but-functional",
+          "capabilities": ["browser-automation", "screenshots", "js-execution"],
+          "apiKeyRequired": false
+        },
+        "fetch": {
+          "status": "active",
+          "capabilities": ["web-content", "html-to-markdown"],
+          "apiKeyRequired": false
+        },
+        "web-browser": {
+          "status": "active",
+          "capabilities": ["smart-extraction", "css-selectors", "async-processing"],
+          "apiKeyRequired": false
+        }
+      },
+      "documentation": "docs/mcp-setup.md"
+    }
+  },
+
+  "metrics": {
+    "setupTime": "2-3 hours",
+    "gamesPlanned": 3,
+    "prototypesPlanned": 5,
+    "daysUntilJam": "Check QUICK-START.md",
+    "targetPrize": "Physics Innovation ($100 charity)"
+  },
+
+  "notes": [
+    "All games are subfolders in games/ directory",
+    "Each game has own .specify/ for specs/plans/tasks",
+    "All games share root .claude/commands/ for slash commands",
+    "WSL2 paths work from both Windows and Linux",
+    "Keep all files in WSL2 filesystem for performance"
+  ]
+}

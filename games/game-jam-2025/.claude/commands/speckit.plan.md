@@ -1,80 +1,85 @@
 ---
-description: Execute the implementation planning workflow using the plan template to generate design artifacts.
+description: Create technical implementation plan from specification
 ---
 
-## User Input
+# Spec-Kit: Create Implementation Plan
 
-```text
-$ARGUMENTS
+Generate a technical implementation plan for the current feature specification.
+
+## Prerequisites Check
+
+Run prerequisite validation:
+```bash
+!./.specify/scripts/bash/check-prerequisites.sh --json
 ```
 
-You **MUST** consider the user input before proceeding (if not empty).
+This ensures:
+- Feature directory exists (`.specify/specs/[###-feature-name]/`)
+- spec.md exists (created by `/speckit.specify`)
+- On correct feature branch
 
-## Outline
+## Process
 
-1. **Setup**: Run `.specify/scripts/bash/setup-plan.sh --json` from repo root and parse JSON for FEATURE_SPEC, IMPL_PLAN, SPECS_DIR, BRANCH. For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
+1. **Read spec.md** from current feature directory
+2. **Read Constitution** for technical constraints and patterns
+3. **Create plan.md** following template structure
+4. **Call setup script**: `.specify/scripts/bash/setup-plan.sh`
 
-2. **Load context**: Read FEATURE_SPEC and `.specify/memory/constitution.md`. Load IMPL_PLAN template (already copied).
+## Plan Requirements
 
-3. **Execute plan workflow**: Follow the structure in IMPL_PLAN template to:
-   - Fill Technical Context (mark unknowns as "NEEDS CLARIFICATION")
-   - Fill Constitution Check section from constitution
-   - Evaluate gates (ERROR if violations unjustified)
-   - Phase 0: Generate research.md (resolve all NEEDS CLARIFICATION)
-   - Phase 1: Generate data-model.md, contracts/, quickstart.md
-   - Phase 1: Update agent context by running the agent script
-   - Re-evaluate Constitution Check post-design
+Your plan MUST include (per .specify/templates/plan-template.md):
 
-4. **Stop and report**: Command ends after Phase 2 planning. Report branch, IMPL_PLAN path, and generated artifacts.
+### Constitution Check (mandatory)
+Validate feature against Constitution Articles:
+- [ ] **Article II**: Theme-First - Does this embody "SMALL"?
+- [ ] **Article III**: Katamari Mechanics - Physics compliance?
+- [ ] **Article V**: Technical Standards - LittleJS idioms followed?
+- [ ] **Article VIII**: Timeline - Can ship in <2 days?
+- [ ] **Article XV**: Playable > Pretty - Is this core gameplay or polish?
 
-## Phases
+### Technical Approach (mandatory)
+- **Architecture**: Classes, modules, data structures needed
+- **LittleJS Patterns**: Which engine features to use (EngineObject, ParticleEmitter, Sound, etc.)
+- **File Organization**: Which files to modify/create (src/game.js, new classes, etc.)
+- **Data Structures**: Configuration objects, enums, constants
+- **Integration Points**: How this connects to existing code
 
-### Phase 0: Outline & Research
+### Implementation Details (mandatory)
+- **Code Structure**: Pseudocode or class outlines
+- **Algorithm Choices**: Specific approaches for complex logic
+- **Performance Considerations**: 60 FPS requirement, entity limits
+- **Testing Strategy**: Manual test steps for each user story
 
-1. **Extract unknowns from Technical Context** above:
-   - For each NEEDS CLARIFICATION → research task
-   - For each dependency → best practices task
-   - For each integration → patterns task
+### Dependencies & Risks (recommended)
+- **Dependencies**: What must exist before this can be built
+- **Risks**: What could go wrong, mitigation strategies
+- **Assumptions**: What we're assuming is true
 
-2. **Generate and dispatch research agents**:
-   ```
-   For each unknown in Technical Context:
-     Task: "Research {unknown} for {feature context}"
-   For each technology choice:
-     Task: "Find best practices for {tech} in {domain}"
-   ```
+## Reference Materials
 
-3. **Consolidate findings** in `research.md` using format:
-   - Decision: [what was chosen]
-   - Rationale: [why chosen]
-   - Alternatives considered: [what else evaluated]
+During planning, reference:
+- **Constitution**: .specify/memory/constitution.md (FRs, class specs, data structures)
+- **Research**: docs/ULTRA-DEEP-RESEARCH.md PART 15 (complete implementation examples)
+- **Current Code**: src/game.js (understand existing structure)
+- **SOURCE-OF-TRUTH**: docs/SOURCE-OF-TRUTH.md (implementation patterns)
 
-**Output**: research.md with all NEEDS CLARIFICATION resolved
+## Output
 
-### Phase 1: Design & Contracts
+Create in current feature directory:
+- `plan.md` - Technical implementation plan
+- `research.md` - Additional research if needed
+- `data-model.md` - Data structure definitions if complex
+- `contracts/` - API contracts if applicable
 
-**Prerequisites:** `research.md` complete
+## Next Steps After Plan Created
 
-1. **Extract entities from feature spec** → `data-model.md`:
-   - Entity name, fields, relationships
-   - Validation rules from requirements
-   - State transitions if applicable
+1. Review plan.md for completeness
+2. Validate Constitution Check (all boxes checked)
+3. Use `/speckit.tasks` to break plan into atomic tasks
+4. Use `/speckit.implement` to execute tasks
 
-2. **Generate API contracts** from functional requirements:
-   - For each user action → endpoint
-   - Use standard REST/GraphQL patterns
-   - Output OpenAPI/GraphQL schema to `/contracts/`
+---
 
-3. **Agent context update**:
-   - Run `.specify/scripts/bash/update-agent-context.sh claude`
-   - These scripts detect which AI agent is in use
-   - Update the appropriate agent-specific context file
-   - Add only new technology from current plan
-   - Preserve manual additions between markers
-
-**Output**: data-model.md, /contracts/*, quickstart.md, agent-specific file
-
-## Key rules
-
-- Use absolute paths
-- ERROR on gate failures or unresolved clarifications
+**Current Feature**: Determined from git branch or SPECIFY_FEATURE env var
+**Plan Template**: .specify/templates/plan-template.md
+**Prerequisites Script**: .specify/scripts/bash/check-prerequisites.sh

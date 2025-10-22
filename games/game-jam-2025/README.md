@@ -39,6 +39,8 @@ This project uses **Spec-Driven Development** with the Spec-Kit system:
 
 **See**: [`.specify/memory/constitution.md`](.specify/memory/constitution.md) for complete development principles.
 
+**Important**: This project has its own Tiny Tycoon-specific constitution with 5 core principles. See [CONSTITUTION-LOCATION.md](CONSTITUTION-LOCATION.md) for clarification on workspace vs project constitutions.
+
 ---
 
 ## Documentation

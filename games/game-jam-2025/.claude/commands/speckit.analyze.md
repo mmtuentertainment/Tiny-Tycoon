@@ -1,184 +1,190 @@
 ---
-description: Perform a non-destructive cross-artifact consistency and quality analysis across spec.md, plan.md, and tasks.md after task generation.
+description: Validate consistency across spec, plan, tasks, and code
 ---
 
-## User Input
+# Spec-Kit: Analyze Cross-Artifact Consistency
 
-```text
-$ARGUMENTS
+Validate alignment between specification, plan, tasks, and implementation code.
+
+## Prerequisites Check
+
+Run prerequisite validation:
+```bash
+!./.specify/scripts/bash/check-prerequisites.sh --json --include-tasks
 ```
 
-You **MUST** consider the user input before proceeding (if not empty).
+This ensures:
+- Feature directory exists
+- spec.md exists
+- plan.md exists
+- tasks.md exists (optional but recommended)
 
-## Goal
+## Process
 
-Identify inconsistencies, duplications, ambiguities, and underspecified items across the three core artifacts (`spec.md`, `plan.md`, `tasks.md`) before implementation. This command MUST run only after `/tasks` has successfully produced a complete `tasks.md`.
+1. **Read all artifacts**: spec.md, plan.md, tasks.md, relevant code files
+2. **Cross-validate** for consistency and coverage
+3. **Generate analysis report**
+4. **Identify contradictions** or gaps
+5. **Recommend fixes**
 
-## Operating Constraints
+## Validation Checks
 
-**STRICTLY READ-ONLY**: Do **not** modify any files. Output a structured analysis report. Offer an optional remediation plan (user must explicitly approve before any follow-up editing commands would be invoked manually).
+### 1. Spec → Plan Alignment
 
-**Constitution Authority**: The project constitution (`.specify/memory/constitution.md`) is **non-negotiable** within this analysis scope. Constitution conflicts are automatically CRITICAL and require adjustment of the spec, plan, or tasks—not dilution, reinterpretation, or silent ignoring of the principle. If a principle itself needs to change, that must occur in a separate, explicit constitution update outside `/analyze`.
+**Check**:
+- [ ] Plan addresses ALL user stories from spec
+- [ ] Plan technical approach matches spec requirements
+- [ ] Plan Constitution Check validates all relevant Articles
+- [ ] Plan doesn't add scope beyond spec (no feature creep)
 
-## Execution Steps
+**Report**:
+```markdown
+## Spec → Plan Alignment
 
-### 1. Initialize Analysis Context
+✅ User Story 1 (Feel Impact): Addressed in "Screen Shake Implementation" section
+✅ User Story 2 (Celebrate Tier-Ups): Addressed in "Tier-Up Events" section
+✅ User Story 3 (Victory Moments): Addressed in "Victory Handler" section
+✅ All 8 Functional Requirements from spec.md covered in plan
+❌ FR-030-008 (accumulate shakes) not mentioned in plan [GAP]
 
-Run `.specify/scripts/bash/check-prerequisites.sh --json --require-tasks --include-tasks` once from repo root and parse JSON for FEATURE_DIR and AVAILABLE_DOCS. Derive absolute paths:
+Recommendation: Add plan section "Multi-Collection Handling" for FR-030-008
+```
 
-- SPEC = FEATURE_DIR/spec.md
-- PLAN = FEATURE_DIR/plan.md
-- TASKS = FEATURE_DIR/tasks.md
+### 2. Plan → Tasks Alignment
 
-Abort with an error message if any required file is missing (instruct the user to run missing prerequisite command).
-For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
+**Check**:
+- [ ] Tasks cover ALL sections of plan
+- [ ] Tasks are atomic (<1 hour each)
+- [ ] Task dependencies match plan order
+- [ ] No tasks implement features not in plan
 
-### 2. Load Artifacts (Progressive Disclosure)
+**Report**:
+```markdown
+## Plan → Tasks Alignment
 
-Load only the minimal necessary context from each artifact:
+✅ "Screen Shake Implementation" section → TASK-001, TASK-002
+✅ "Tier-Up Events" section → TASK-003
+✅ "Victory Handler" section → TASK-004
+✅ All plan sections have corresponding tasks
+⚠️ TASK-002 estimated at 2 hours (should be <1 hour) [WARNING]
 
-**From spec.md:**
+Recommendation: Split TASK-002 into TASK-002a and TASK-002b
+```
 
-- Overview/Context
-- Functional Requirements
-- Non-Functional Requirements
-- User Stories
-- Edge Cases (if present)
+### 3. Tasks → Code Alignment
 
-**From plan.md:**
+**Check**:
+- [ ] All [x] DONE tasks have code implementations
+- [ ] Code files match task specifications
+- [ ] Code implements task test criteria
+- [ ] No code exists for [ ] TODO tasks
 
-- Architecture/stack choices
-- Data Model references
-- Phases
-- Technical constraints
+**Report**:
+```markdown
+## Tasks → Code Alignment
 
-**From tasks.md:**
+✅ TASK-001 [x] DONE: Code exists in src/game.js:612 (cameraShake = ...)
+✅ TASK-002 [x] DONE: Formula matches spec (0.05 + value * 0.0001)
+❌ TASK-003 [ ] TODO: No onTierUp() method found in code [GAP]
+❌ TASK-004 [ ] TODO: Victory handler missing shake call [GAP]
 
-- Task IDs
-- Descriptions
-- Phase grouping
-- Parallel markers [P]
-- Referenced file paths
+Recommendation: Implement TASK-003 and TASK-004 to complete feature
+```
 
-**From constitution:**
+### 4. Code → Constitution Compliance
 
-- Load `.specify/memory/constitution.md` for principle validation
+**Check**:
+- [ ] Code follows LittleJS idioms (FR-018)
+- [ ] No prohibited patterns (FR-019)
+- [ ] Meets performance standards (FR-021)
+- [ ] Follows git workflow (FR-039, FR-040)
 
-### 3. Build Semantic Models
+**Report**:
+```markdown
+## Constitution Compliance
 
-Create internal representations (do not include raw artifacts in output):
+✅ FR-018: All classes extend EngineObject
+✅ FR-018: Uses vec2() for positions
+✅ FR-018: Uses LittleJS cameraShake global
+✅ FR-021: Maintains 60 FPS (tested)
+✅ FR-024: No console errors
+⚠️ FR-040: Commit message missing FR reference [MINOR]
 
-- **Requirements inventory**: Each functional + non-functional requirement with a stable key (derive slug based on imperative phrase; e.g., "User can upload file" → `user-can-upload-file`)
-- **User story/action inventory**: Discrete user actions with acceptance criteria
-- **Task coverage mapping**: Map each task to one or more requirements or stories (inference by keyword / explicit reference patterns like IDs or key phrases)
-- **Constitution rule set**: Extract principle names and MUST/SHOULD normative statements
+Recommendation: Update commit message to reference FR-030
+```
 
-### 4. Detection Passes (Token-Efficient Analysis)
+### 5. Theme Validation
 
-Focus on high-signal findings. Limit to 50 findings total; aggregate remainder in overflow summary.
+**Check**:
+- [ ] Feature reinforces "SMALL" theme (Article II)
+- [ ] 30-second theme test passes
+- [ ] Theme Success Criteria met
 
-#### A. Duplication Detection
+**Report**:
+```markdown
+## Theme Validation
 
-- Identify near-duplicate requirements
-- Mark lower-quality phrasing for consolidation
+✅ TSC-001: Shake intensity scales with size (SMALL object = small shake, BIG object = big shake)
+✅ TSC-002: Players feel progression through shake (observable in playtesting)
+✅ TSC-003: Theme is reinforced through mechanic (not just decoration)
+✅ 30-second test: 3/3 playtesters identified growth through shake intensity
 
-#### B. Ambiguity Detection
+Status: THEME VALIDATED ✅
+```
 
-- Flag vague adjectives (fast, scalable, secure, intuitive, robust) lacking measurable criteria
-- Flag unresolved placeholders (TODO, TKTK, ???, `<placeholder>`, etc.)
+## Output Format
 
-#### C. Underspecification
+Generate analysis report in current feature directory:
 
-- Requirements with verbs but missing object or measurable outcome
-- User stories missing acceptance criteria alignment
-- Tasks referencing files or components not defined in spec/plan
+```markdown
+# Cross-Artifact Analysis Report
 
-#### D. Constitution Alignment
+**Feature**: 003-add-screen-shake-feedback
+**Generated**: [Date]
+**Status**: [PASS/FAIL/PARTIAL]
 
-- Any requirement or plan element conflicting with a MUST principle
-- Missing mandated sections or quality gates from constitution
+## Summary
 
-#### E. Coverage Gaps
+- Spec → Plan: [X/Y checks passed]
+- Plan → Tasks: [X/Y checks passed]
+- Tasks → Code: [X/Y checks passed]
+- Constitution Compliance: [X/Y checks passed]
+- Theme Validation: [PASS/FAIL]
 
-- Requirements with zero associated tasks
-- Tasks with no mapped requirement/story
-- Non-functional requirements not reflected in tasks (e.g., performance, security)
+## Detailed Findings
 
-#### F. Inconsistency
+[Full reports from each validation check]
 
-- Terminology drift (same concept named differently across files)
-- Data entities referenced in plan but absent in spec (or vice versa)
-- Task ordering contradictions (e.g., integration tasks before foundational setup tasks without dependency note)
-- Conflicting requirements (e.g., one requires Next.js while other specifies Vue)
+## Recommendations
 
-### 5. Severity Assignment
+1. [High priority fix]
+2. [Medium priority fix]
+3. [Low priority enhancement]
 
-Use this heuristic to prioritize findings:
+## Conclusion
 
-- **CRITICAL**: Violates constitution MUST, missing core spec artifact, or requirement with zero coverage that blocks baseline functionality
-- **HIGH**: Duplicate or conflicting requirement, ambiguous security/performance attribute, untestable acceptance criterion
-- **MEDIUM**: Terminology drift, missing non-functional task coverage, underspecified edge case
-- **LOW**: Style/wording improvements, minor redundancy not affecting execution order
+[READY TO MERGE / NEEDS WORK / BLOCKED]
+```
 
-### 6. Produce Compact Analysis Report
+## Next Steps After Analysis
 
-Output a Markdown report (no file writes) with the following structure:
+**If READY TO MERGE**:
+- All alignments pass
+- Constitution compliant
+- Theme validated
+- Merge feature branch
 
-## Specification Analysis Report
+**If NEEDS WORK**:
+- Fix identified gaps
+- Re-run `/speckit.analyze` to verify
+- Continue iteration
 
-| ID | Category | Severity | Location(s) | Summary | Recommendation |
-|----|----------|----------|-------------|---------|----------------|
-| A1 | Duplication | HIGH | spec.md:L120-134 | Two similar requirements ... | Merge phrasing; keep clearer version |
+**If BLOCKED**:
+- Resolve blocker (missing dependency, unclear requirement)
+- Update spec/plan/tasks as needed
+- Re-run workflow from appropriate step
 
-(Add one row per finding; generate stable IDs prefixed by category initial.)
+---
 
-**Coverage Summary Table:**
-
-| Requirement Key | Has Task? | Task IDs | Notes |
-|-----------------|-----------|----------|-------|
-
-**Constitution Alignment Issues:** (if any)
-
-**Unmapped Tasks:** (if any)
-
-**Metrics:**
-
-- Total Requirements
-- Total Tasks
-- Coverage % (requirements with >=1 task)
-- Ambiguity Count
-- Duplication Count
-- Critical Issues Count
-
-### 7. Provide Next Actions
-
-At end of report, output a concise Next Actions block:
-
-- If CRITICAL issues exist: Recommend resolving before `/implement`
-- If only LOW/MEDIUM: User may proceed, but provide improvement suggestions
-- Provide explicit command suggestions: e.g., "Run /specify with refinement", "Run /plan to adjust architecture", "Manually edit tasks.md to add coverage for 'performance-metrics'"
-
-### 8. Offer Remediation
-
-Ask the user: "Would you like me to suggest concrete remediation edits for the top N issues?" (Do NOT apply them automatically.)
-
-## Operating Principles
-
-### Context Efficiency
-
-- **Minimal high-signal tokens**: Focus on actionable findings, not exhaustive documentation
-- **Progressive disclosure**: Load artifacts incrementally; don't dump all content into analysis
-- **Token-efficient output**: Limit findings table to 50 rows; summarize overflow
-- **Deterministic results**: Rerunning without changes should produce consistent IDs and counts
-
-### Analysis Guidelines
-
-- **NEVER modify files** (this is read-only analysis)
-- **NEVER hallucinate missing sections** (if absent, report them accurately)
-- **Prioritize constitution violations** (these are always CRITICAL)
-- **Use examples over exhaustive rules** (cite specific instances, not generic patterns)
-- **Report zero issues gracefully** (emit success report with coverage statistics)
-
-## Context
-
-$ARGUMENTS
+**Current Feature**: Determined from git branch
+**Output**: analysis-report.md in feature directory

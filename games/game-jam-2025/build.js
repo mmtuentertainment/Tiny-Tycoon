@@ -16,7 +16,12 @@ const path = require('path');
 // Configuration
 const CONFIG = {
     sourceFiles: [
-        '../../LittleJS/dist/littlejs.release.js',
+        // Use vendor directory (for Vercel), fallback to local symlink, then workspace parent
+        fs.existsSync('vendor/littlejs.release.js')
+            ? 'vendor/littlejs.release.js'
+            : fs.existsSync('LittleJS/dist/littlejs.release.js')
+            ? 'LittleJS/dist/littlejs.release.js'
+            : '../../LittleJS/dist/littlejs.release.js',
         'src/game.js',
     ],
     assetFiles: [
