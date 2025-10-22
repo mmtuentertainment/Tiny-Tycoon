@@ -837,18 +837,18 @@ function gameRender() {
     // Draw green background (much larger to cover entire play area)
     drawRect(vec2(0, 0), vec2(playAreaSize * 2, playAreaSize * 2), new Color(0.2, 0.6, 0.3));
 
-    // Draw grid lines scaled to play area
-    const halfSize = playAreaSize / 2;
-    const gridStep = 5;
-    for (let x = -halfSize; x <= halfSize; x += gridStep) {
-        drawLine(vec2(x, -halfSize), vec2(x, halfSize), 0.1, new Color(0, 0, 0, 0.3));
-    }
-    for (let y = -halfSize; y <= halfSize; y += gridStep) {
-        drawLine(vec2(-halfSize, y), vec2(halfSize, y), 0.1, new Color(0, 0, 0, 0.3));
-    }
+    // PERFORMANCE: Grid lines disabled - 40-60 draw calls per frame causing lag!
+    // const halfSize = playAreaSize / 2;
+    // const gridStep = 5;
+    // for (let x = -halfSize; x <= halfSize; x += gridStep) {
+    //     drawLine(vec2(x, -halfSize), vec2(x, halfSize), 0.1, new Color(0, 0, 0, 0.3));
+    // }
+    // for (let y = -halfSize; y <= halfSize; y += gridStep) {
+    //     drawLine(vec2(-halfSize, y), vec2(halfSize, y), 0.1, new Color(0, 0, 0, 0.3));
+    // }
 
-    // Draw origin marker (red dot at 0,0)
-    drawRect(vec2(0, 0), vec2(1, 1), new Color(1, 0, 0));
+    // Draw origin marker (red dot at 0,0) - DISABLED for performance
+    // drawRect(vec2(0, 0), vec2(1, 1), new Color(1, 0, 0));
 }
 
 function gameRenderPost() {
@@ -1519,10 +1519,9 @@ class PlayerBall extends EngineObject {
         }
 
         // Exponential size growth (FR-011, from research.md R1)
-        // BUGFIX: TRUE EXPONENTIAL - growth as percentage of CURRENT player size + object bonus
-        // This ensures growth remains meaningful even when large
+        // BUGFIX: MUCH faster exponential growth - 10% base + up to 50% for big objects
         const sizeRatio = collectible.size.x / this.size.x;  // How big is object vs player?
-        const growthAmount = this.size.x * (0.05 + sizeRatio * 0.3);  // Base 5% + up to 30% based on object size
+        const growthAmount = this.size.x * (0.10 + sizeRatio * 0.5);  // Base 10% + up to 50% based on ratio
         console.log(`Collected ${objectName} (size ${collectible.size.x.toFixed(2)}, ratio ${sizeRatio.toFixed(2)}) → growth: ${growthAmount.toFixed(3)}, new size: ${(this.size.x + growthAmount).toFixed(2)}`);
         this.size = this.size.add(vec2(growthAmount, growthAmount));
 
