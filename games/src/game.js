@@ -905,24 +905,24 @@ function gameRenderPost() {
         if (levelNum === 1) {
             // Level 1: Broke Era - Uncommon grindset
             titleText = 'LEVEL 1 COMPLETE';
-            subtitleText = 'UNCOMMON GRINDSET UNLOCKED ✅';
-            scoreLabel = `Portfolio: $${levelScoreFormatted} (Bussin fr fr)`;
-            sizeLabel = `Size: ${sizeMultiplier}x (Growing fr)`;
-            flavorText = 'Press SPACE for next level';
+            subtitleText = 'POV: YOU GOT THAT DAWG IN YOU ✅';
+            scoreLabel = `Bag: $${levelScoreFormatted} (Mewing hard rn)`;
+            sizeLabel = `Size: ${sizeMultiplier}x (Mid but valid)`;
+            flavorText = 'Press SPACE for that sigma grind';
         } else if (levelNum === 2) {
             // Level 2: Mid-tier - Influencer status
             titleText = 'LEVEL 2 COMPLETE';
-            subtitleText = 'MID-TIER INFLUENCER ACHIEVED 📱';
-            scoreLabel = `Net Worth: $${levelScoreFormatted} (It\'s giving hustle)`;
-            sizeLabel = `Size: ${sizeMultiplier}x (Massive W)`;
-            flavorText = 'Press SPACE for oligarch status';
+            subtitleText = 'UNDERSTOOD THE ASSIGNMENT 💅';
+            scoreLabel = `Net Worth: $${levelScoreFormatted} (Lowkey unhinged)`;
+            sizeLabel = `Size: ${sizeMultiplier}x (Ate and left no crumbs)`;
+            flavorText = 'Press SPACE - we got oligarch at home';
         } else {
             // Level 3: Oligarch - Generational wealth
             titleText = 'LEVEL 3 COMPLETE';
-            subtitleText = 'OLIGARCH STATUS: CONFIRMED ✅';
-            scoreLabel = `Portfolio: $${levelScoreFormatted} (No cap legendary)`;
-            sizeLabel = `Size: ${sizeMultiplier}x (UNGOVERNABLE)`;
-            flavorText = 'Press SPACE to flex';
+            subtitleText = 'RENT-FREE IN THEIR HEADS 🧠';
+            scoreLabel = `Empire: $${levelScoreFormatted} (Main character energy)`;
+            sizeLabel = `Size: ${sizeMultiplier}x (Built different fr)`;
+            flavorText = 'Press SPACE - touch grass never heard of her';
         }
 
         // Render victory text (FR-007-004)
@@ -947,13 +947,13 @@ function gameRenderPost() {
 
         // Maximum absurdity text
         drawTextScreen('🎮 GAME COMPLETE 🎮', vec2(centerX, centerY + 120), 54, new Color(1, 1, 0));
-        drawTextScreen('YOU WON CAPITALISM', vec2(centerX, centerY + 70), 48, new Color(0, 1, 0));
-        drawTextScreen(`Size: ${sizeMultiplier}x (COSMIC)`, vec2(centerX, centerY + 20), 32, new Color(1, 1, 1));
-        drawTextScreen(`Total: $${totalScoreFormatted} (Generational)`, vec2(centerX, centerY - 20), 32, new Color(1, 1, 0));
+        drawTextScreen('LITERALLY BECAME THE 1%', vec2(centerX, centerY + 70), 48, new Color(0, 1, 0));
+        drawTextScreen(`Size: ${sizeMultiplier}x (Ate the whole menu)`, vec2(centerX, centerY + 20), 32, new Color(1, 1, 1));
+        drawTextScreen(`Total: $${totalScoreFormatted} (Generational wealth unlocked)`, vec2(centerX, centerY - 20), 32, new Color(1, 1, 0));
         drawTextScreen(`Biggest W: ${biggestW}`, vec2(centerX, centerY - 60), 28, new Color(1, 1, 1));
-        drawTextScreen('UNGOVERNABLE STATUS: ACHIEVED ✅', vec2(centerX, centerY - 100), 28, new Color(0, 1, 0));
-        drawTextScreen('Touch grass? Nah, touch ASSETS 💎', vec2(centerX, centerY - 140), 24, new Color(0.9, 0.9, 0.9));
-        drawTextScreen('You are now INEVITABLE', vec2(centerX, centerY - 180), 22, new Color(0.7, 0.7, 0.7));
+        drawTextScreen('POV: Billionaire mindset achieved ✅', vec2(centerX, centerY - 100), 28, new Color(0, 1, 0));
+        drawTextScreen('They said touch grass. You touched MARS 🚀', vec2(centerX, centerY - 140), 24, new Color(0.9, 0.9, 0.9));
+        drawTextScreen('Now go outside (we're not responsible)', vec2(centerX, centerY - 180), 22, new Color(0.7, 0.7, 0.7));
         return; // Skip normal HUD
     }
 
@@ -1443,7 +1443,11 @@ class Collectible extends EngineObject {
             // Quick Manhattan distance check (no sqrt!) - same as collision optimization
             const dx = Math.abs(this.pos.x - player.pos.x);
             const dy = Math.abs(this.pos.y - player.pos.y);
-            const attractRange = player.size.x * 3;  // Attract within 3x player radius
+
+            // FIX: Cap attraction range to prevent Level 3 auto-win
+            // At size 50: range would be 150 units (covers entire map!)
+            // Cap at 8 units = reasonable attraction radius
+            const attractRange = Math.min(8, player.size.x * 3);  // Max 8 units
 
             // Skip if too far (most objects filtered here - FAST)
             if (dx > attractRange || dy > attractRange) return;
