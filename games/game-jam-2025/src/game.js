@@ -1504,6 +1504,7 @@ class PlayerBall extends EngineObject {
         // Exponential size growth (FR-011, from research.md R1)
         // BUGFIX: Growth based on OBJECT SIZE, not value (ensures visible growth from small objects)
         const growthAmount = collectible.size.x * 0.15;  // Grow by 15% of collected object's size
+        console.log(`Collected ${objectData ? objectData.name : collectible.type} (size ${collectible.size.x.toFixed(2)}) → growth: ${growthAmount.toFixed(3)}, new size: ${(this.size.x + growthAmount).toFixed(2)}`);
         this.size = this.size.add(vec2(growthAmount, growthAmount));
 
         // Update mass to match new size (area-based for momentum)
