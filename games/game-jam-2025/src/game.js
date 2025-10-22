@@ -1448,6 +1448,7 @@ class PlayerBall extends EngineObject {
         this.color = new Color(1, 0.8, 0);  // Golden yellow
         this.collideTiles = false;     // Free movement, no tile collision
         this.collideSolidObjects = true;  // Enable collision with other objects
+        this.collisionCheckCounter = 0;  // PERFORMANCE: Only check collisions every N frames
     }
 
     update() {
@@ -1466,8 +1467,12 @@ class PlayerBall extends EngineObject {
         // Parent update handles physics and damping (FR-005)
         super.update();
 
+        // PERFORMANCE: Only check collisions every 2 frames (30 checks/sec instead of 60)
+        this.collisionCheckCounter++;
+        if (this.collisionCheckCounter % 2 !== 0) return;  // Skip odd frames
+
         // PERFORMANCE: Optimized collision - only check VERY close objects
-        const checkRadius = 3;  // Ultra-tight radius (was 5, still too many checks)
+        const checkRadius = 3;  // Ultra-tight radius
 
         for (let i = 0; i < engineObjects.length; i++) {
             const obj = engineObjects[i];
