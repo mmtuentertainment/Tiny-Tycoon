@@ -1,0 +1,71 @@
+An AudioContext was prevented from starting automatically. It must be created or resumed after a user gesture on the page. littlejs.release.js:4436:20
+Starting LittleJS engine... game.js:1626:9
+Tiny Tycoon - Game initialized game.js:468:13
+SoundManager initialized successfully game.js:343:21
+Level 1: Spawned 24 collectibles with progressive sizing game.js:1358:13
+  Player size: 0.50, Target: 5 game.js:1359:13
+  Small pool: 3, Medium: 3, Large: 0 game.js:1360:13
+Level 1 started - Target: 5x, Time: 60s game.js:1236:13
+  Player actual size: 0.50 units game.js:1237:13
+ENGINE INIT PROMISE RESOLVED game.js:1630:25
+Collected HOMEWORK (size 0.44, ratio 0.89) → growth: 0.272, new size: 0.77 game.js:1529:17
+Collected GUM (size 0.35, ratio 0.46) → growth: 0.253, new size: 1.03 game.js:1529:17
+Collected BACKPACK (size 0.55, ratio 0.53) → growth: 0.376, new size: 1.40 game.js:1529:17
+Collected BACKPACK (size 0.56, ratio 0.40) → growth: 0.422, new size: 1.82 game.js:1529:17
+Collected GUM (size 0.36, ratio 0.19) → growth: 0.360, new size: 2.18 game.js:1529:17
+Collected TEACHER (size 0.89, ratio 0.41) → growth: 0.666, new size: 2.85 game.js:1529:17
+Collected TEACHER (size 0.89, ratio 0.31) → growth: 0.729, new size: 3.58 game.js:1529:17
+Collected CRAYON (size 0.39, ratio 0.11) → growth: 0.554, new size: 4.13 game.js:1529:17
+Collected CRAYON (size 0.35, ratio 0.09) → growth: 0.590, new size: 4.72 game.js:1529:17
+Collected GUM (size 0.36, ratio 0.08) → growth: 0.651, new size: 5.37 game.js:1529:17
+VICTORY! Target size reached! game.js:1574:21
+Level 2: Spawned 28 collectibles with progressive sizing game.js:1358:13
+  Player size: 0.50, Target: 15 game.js:1359:13
+  Small pool: 2, Medium: 10, Large: 0 game.js:1360:13
+Level 2 started - Target: 15x, Time: 90s game.js:1236:13
+  Player actual size: 0.50 units game.js:1237:13
+Collected GUM (size 0.36, ratio 0.72) → growth: 0.229, new size: 0.73 game.js:1529:17
+Collected PENNY (size 0.34, ratio 0.47) → growth: 0.244, new size: 0.97 game.js:1529:17
+Collected PENNY (size 0.31, ratio 0.32) → growth: 0.252, new size: 1.22 game.js:1529:17
+Collected BASKETBALL (size 0.62, ratio 0.51) → growth: 0.434, new size: 1.66 game.js:1529:17
+Collected BUSINESSMAN (size 1.08, ratio 0.65) → growth: 0.704, new size: 2.36 game.js:1529:17
+Collected BUSINESSMAN (size 1.09, ratio 0.46) → growth: 0.780, new size: 3.14 game.js:1529:17
+Collected COFFEE (size 0.65, ratio 0.21) → growth: 0.641, new size: 3.78 game.js:1529:17
+Collected CAR (size 1.70, ratio 0.45) → growth: 1.229, new size: 5.01 game.js:1529:17
+Collected CAR (size 1.73, ratio 0.34) → growth: 1.364, new size: 6.38 game.js:1529:17
+Collected BACKPACK (size 0.58, ratio 0.09) → growth: 0.929, new size: 7.31 game.js:1529:17
+Collected LAPTOP (size 0.85, ratio 0.12) → growth: 1.155, new size: 8.46 game.js:1529:17
+Collected BACKPACK (size 0.56, ratio 0.07) → growth: 1.126, new size: 9.59 game.js:1529:17
+Collected BASKETBALL (size 0.62, ratio 0.06) → growth: 1.267, new size: 10.86 game.js:1529:17
+Collected DESK (size 0.78, ratio 0.07) → growth: 1.476, new size: 12.33 game.js:1529:17
+Collected PENNY (size 0.31, ratio 0.02) → growth: 1.387, new size: 13.72 game.js:1529:17
+Collected GUM (size 0.36, ratio 0.03) → growth: 1.550, new size: 15.27 game.js:1529:17
+VICTORY! Target size reached! game.js:1574:21
+Level 3: Spawned 25 collectibles with progressive sizing game.js:1358:13
+  Player size: 0.50, Target: 50 game.js:1359:13
+  Small pool: 2, Medium: 8, Large: 0 game.js:1360:13
+Level 3 started - Target: 50x, Time: 120s game.js:1236:13
+  Player actual size: 0.50 units game.js:1237:13
+Collected PENNY (size 0.30, ratio 0.61) → growth: 0.202, new size: 0.70 game.js:1529:17
+Collected GUM (size 0.36, ratio 0.51) → growth: 0.250, new size: 0.95 game.js:1529:17
+Collected COFFEE (size 0.66, ratio 0.70) → growth: 0.426, new size: 1.38 game.js:1529:17
+Collected COFFEE (size 0.66, ratio 0.48) → growth: 0.468, new size: 1.85 game.js:1529:17
+Collected PENNY (size 0.31, ratio 0.17) → growth: 0.339, new size: 2.18 game.js:1529:17
+Collected GUM (size 0.36, ratio 0.16) → growth: 0.397, new size: 2.58 game.js:1529:17
+Collected PENNY (size 0.31, ratio 0.12) → growth: 0.412, new size: 2.99 game.js:1529:17
+Collected PENNY (size 0.31, ratio 0.10) → growth: 0.454, new size: 3.45 game.js:1529:17
+Collected GUM (size 0.35, ratio 0.10) → growth: 0.521, new size: 3.97 game.js:1529:17
+Collected GUM (size 0.35, ratio 0.09) → growth: 0.574, new size: 4.54 game.js:1529:17
+Collected YACHT (size 3.62, ratio 0.80) → growth: 2.265, new size: 6.81 game.js:1529:17
+DEFEAT! Time expired! game.js:778:21
+Level 3: Spawned 32 collectibles with progressive sizing game.js:1358:13
+  Player size: 0.50, Target: 50 game.js:1359:13
+  Small pool: 2, Medium: 8, Large: 0 game.js:1360:13
+Level 3 started - Target: 50x, Time: 120s game.js:1236:13
+  Player actual size: 0.50 units game.js:1237:13
+DEFEAT! Time expired! game.js:778:21
+Level 3: Spawned 28 collectibles with progressive sizing game.js:1358:13
+  Player size: 0.50, Target: 50 game.js:1359:13
+  Small pool: 2, Medium: 8, Large: 0 game.js:1360:13
+Level 3 started - Target: 50x, Time: 120s game.js:1236:13
+  Player actual size: 0.50 units game.js:1237:13
