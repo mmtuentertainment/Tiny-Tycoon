@@ -1393,40 +1393,11 @@ class Collectible extends EngineObject {
     update() {
         super.update();
 
-        // Magnetic attraction (FR-012, from research.md R2)
-        if (!player) return;
-
-        const distanceToPlayer = this.pos.distance(player.pos);
-        const sizeRatio = this.size.x / player.size.x;
-
-        // Magnetic attraction: pull collectable objects when you're close
-        // Only works on objects you CAN collect (smaller than you)
-        const canCollect = player.size.x > this.size.x;
-
-        // Scale magnetic range with player size (so it stays consistent as you grow)
-        const magnetRange = 0.8 + (player.size.x * 0.3);  // Grows with player: 0.8 at start, 1.4 at size 2.0
-
-        if (canCollect && distanceToPlayer < magnetRange) {
-            // Stronger pull when very close, weaker when far
-            const distanceFactor = 1.0 - (distanceToPlayer / magnetRange);
-            const magnetForce = 0.2 * distanceFactor;
-
-            // Apply gentle pull toward player
-            const directionToPlayer = player.pos.subtract(this.pos).normalize();
-            this.velocity = this.velocity.add(directionToPlayer.scale(magnetForce * 0.1));
-
-            this.magnetActive = true;
-
-            // Feature 005: Magnetic trail particles (FR-005-010-CLARIFIED)
-            // PERFORMANCE FIX: Reduce particle spam - only emit occasionally
-            const sizeThreshold = this.size.x * 0.5; // 50% rule from FR-001
-            if (player.size.x >= sizeThreshold * 0.9 && Math.random() < 0.1) {  // Only 10% of frames
-                // Emit 1 particle (reduced from 1-2)
-                spawnMagneticTrailParticles(this.pos, 1);
-            }
-        } else {
-            this.magnetActive = false;
-        }
+        // PERFORMANCE: Disable magnetic attraction temporarily to fix lag
+        // Will re-enable after optimizing spatial partitioning
+        // Magnetic attraction was running for all 40-80 objects every frame
+        // Each doing distance calc + normalize + velocity updates = lag
+        this.magnetActive = false;
     }
 
     render() {
@@ -1474,9 +1445,29 @@ class PlayerBall extends EngineObject {
         // Parent update handles physics and damping (FR-005)
         super.update();
 
-        // PERFORMANCE: Remove manual collision check - rely on collideWithObject() callback
-        // Manual loop was causing lag (40-80 distance calculations per frame!)
-        // LittleJS's built-in collision system handles this efficiently
+        // PERFORMANCE: Optimized collision check - only check nearby objects
+        // Use spatial culling to reduce checks from 80 to ~5-10
+        const checkRadius = this.size.x * 3;  // Only check objects within 3x player size
+
+        for (let i = 0; i < engineObjects.length; i++) {
+            const obj = engineObjects[i];
+            if (obj instanceof Collectible && !obj.destroyed) {
+                // Quick distance check (spatial culling)
+                const dx = Math.abs(this.pos.x - obj.pos.x);
+                const dy = Math.abs(this.pos.y - obj.pos.y);
+
+                // Skip if too far (Manhattan distance approximation - faster than sqrt)
+                if (dx > checkRadius || dy > checkRadius) continue;
+
+                // Precise distance check only for nearby objects
+                const dist = this.pos.distance(obj.pos);
+                const minDist = (this.size.x + obj.size.x) / 2;
+
+                if (dist < minDist && this.size.x > obj.size.x) {
+                    this.collect(obj);
+                }
+            }
+        }
     }
 
     collideWithObject(other) {
